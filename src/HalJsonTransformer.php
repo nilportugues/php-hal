@@ -166,11 +166,11 @@ class HalJsonTransformer extends Transformer
     /**
      * @param array $data
      * @param string $propertyName
-     * @param string $idProperties
-     * @param string $idValues
+     * @param array $idProperties
+     * @param array $idValues
      * @param string $type
      */
-    private function addEmbeddedResourceLinks(array &$data, $propertyName, $idProperties, $idValues, $type)
+    private function addEmbeddedResourceLinks(array &$data, $propertyName, array &$idProperties, array &$idValues, $type)
     {
         $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
             $idProperties,
