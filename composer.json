@@ -1,0 +1,39 @@
+{
+    "name": "nilportugues/haljson",
+    "type": "library",
+    "description": "HAL+JSON API format transformers outputting valid API responses.",
+    "keywords": ["json", "api", "hal", "serializer", "transformer", "psr7", "response"],
+    "homepage": "http://nilportugues.com",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Nil Portugués Calderó",
+            "email": "contact@nilportugues.com",
+            "role": "Project Lead Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "nilportugues/api-transformer": "dev-master",
+        "psr/http-message": "~1.0",
+        "zendframework/zend-diactoros": "^1.1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.4.*",
+        "fabpot/php-cs-fixer": "^1.9",
+        "mmoreram/php-formatter": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "NilPortugues\\Api\\HalJson\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NilPortugues\\Tests\\Api\\HalJson\\": "tests/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin/"
+    }
+}
