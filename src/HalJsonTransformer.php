@@ -152,19 +152,8 @@ class HalJsonTransformer extends Transformer
                     $this->mappings[$type]->getResourceUrl()
                 );
 
-                $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY] = array_merge(
-                    $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY],
-                    $this->addHrefToLinks($this->getResponseAdditionalLinks($value, $type))
-                );
-
-                $data[self::LINKS_KEY][$this->getPropertyNameWithCurie(
-                    $type,
-                    $propertyName
-                )][self::LINKS_HREF] = str_replace(
-                    $idProperties,
-                    $idValues,
-                    $this->mappings[$type]->getResourceUrl()
-                );
+                $this->addEmbeddedResourceLinks($data, $value, $propertyName, $type);
+                $this->addEmbeddedResourceLinkToLinks($data, $propertyName, $idProperties, $idValues, $type);
 
                 unset($data[$propertyName]);
             }
@@ -178,6 +167,20 @@ class HalJsonTransformer extends Transformer
     {
         $curie = $this->mappings[$type]->getCuries();
         $this->curies[$curie['name']] = $curie;
+    }
+
+    /**
+     * @param array  $data
+     * @param array  $value
+     * @param string $propertyName
+     * @param string $type
+     */
+    private function addEmbeddedResourceLinks(array &$data, array &$value, $propertyName, $type)
+    {
+        $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY] = array_merge(
+            $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY],
+            $this->addHrefToLinks($this->getResponseAdditionalLinks($value, $type))
+        );
     }
 
     /**
@@ -231,6 +234,22 @@ class HalJsonTransformer extends Transformer
 
     /**
      * @param array  $data
+     * @param string $propertyName
+     * @param array  $idProperties
+     * @param array  $idValues
+     * @param string $type
+     */
+    private function addEmbeddedResourceLinkToLinks(array &$data, $propertyName, array &$idProperties, array &$idValues, $type)
+    {
+        $data[self::LINKS_KEY][$this->getPropertyNameWithCurie($type, $propertyName)][self::LINKS_HREF] = str_replace(
+            $idProperties,
+            $idValues,
+            $this->mappings[$type]->getResourceUrl()
+        );
+    }
+
+    /**
+     * @param array  $data
      * @param array  $value
      * @param string $propertyName
      */
@@ -260,18 +279,7 @@ class HalJsonTransformer extends Transformer
                 $type = $inArrayValue[Serializer::CLASS_IDENTIFIER_KEY];
 
                 $this->addCurieForResource($type);
-
-                list($idValues, $idProperties) = RecursiveFormatterHelper::getIdPropertyAndValues(
-                    $this->mappings,
-                    $inArrayValue,
-                    $type
-                );
-
-                $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
-                    $idProperties,
-                    $idValues,
-                    $this->mappings[$type]->getResourceUrl()
-                );
+                $this->addArrayValueResourceToEmbedded($data, $propertyName, $type, $inArrayProperty, $inArrayValue);
 
                 unset($data[$propertyName]);
             }
@@ -286,6 +294,28 @@ class HalJsonTransformer extends Transformer
     private function isResourceInArray($inArrayValue)
     {
         return is_array($inArrayValue) && !empty($inArrayValue[Serializer::CLASS_IDENTIFIER_KEY]);
+    }
+
+    /**
+     * @param array  $data
+     * @param string $propertyName
+     * @param string $type
+     * @param string $inArrayProperty
+     * @param array  $inArrayValue
+     */
+    private function addArrayValueResourceToEmbedded(array &$data, $propertyName, $type, $inArrayProperty, array &$inArrayValue)
+    {
+        list($idValues, $idProperties) = RecursiveFormatterHelper::getIdPropertyAndValues(
+            $this->mappings,
+            $inArrayValue,
+            $type
+        );
+
+        $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
+            $idProperties,
+            $idValues,
+            $this->mappings[$type]->getResourceUrl()
+        );
     }
 
     /**
