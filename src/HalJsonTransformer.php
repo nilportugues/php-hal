@@ -2,6 +2,7 @@
 
 namespace NilPortugues\Api\HalJson;
 
+use NilPortugues\Api\HalJson\Helpers\AttributeFormatterHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveDeleteHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveFormatterHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveRenamerHelper;
@@ -117,7 +118,6 @@ class HalJsonTransformer extends Transformer
         foreach ($data as $propertyName => &$value) {
             if (is_array($value)) {
                 $this->setEmbeddedForResource($data, $value, $propertyName);
-
                 $this->setEmbeddedForResourceArray($data, $value, $propertyName);
             }
         }
@@ -131,11 +131,10 @@ class HalJsonTransformer extends Transformer
     private function setEmbeddedForResource(array &$data, array &$value, $propertyName)
     {
         if (!empty($value[Serializer::CLASS_IDENTIFIER_KEY])) {
+
             $type = $value[Serializer::CLASS_IDENTIFIER_KEY];
-
-            $this->addCurieForResource($type);
-
             $idProperties = $this->mappings[$type]->getIdProperties();
+            $this->addCurieForResource($type);
 
             if (false === in_array($propertyName, $idProperties)) {
                 $data[self::EMBEDDED_KEY][$propertyName] = $value;
@@ -146,13 +145,8 @@ class HalJsonTransformer extends Transformer
                     $type
                 );
 
-                $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
-                    $idProperties,
-                    $idValues,
-                    $this->mappings[$type]->getResourceUrl()
-                );
-
-                $this->addEmbeddedResourceLinks($data, $value, $propertyName, $type);
+                $this->addEmbeddedResourceLinks($data, $propertyName, $idProperties, $idValues, $type);
+                $this->addEmbeddedResourceAdditionalLinks($data, $value, $propertyName, $type);
                 $this->addEmbeddedResourceLinkToLinks($data, $propertyName, $idProperties, $idValues, $type);
 
                 unset($data[$propertyName]);
@@ -170,12 +164,28 @@ class HalJsonTransformer extends Transformer
     }
 
     /**
+     * @param array $data
+     * @param string $propertyName
+     * @param string $idProperties
+     * @param string $idValues
+     * @param string $type
+     */
+    private function addEmbeddedResourceLinks(array &$data, $propertyName, $idProperties, $idValues, $type)
+    {
+        $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
+            $idProperties,
+            $idValues,
+            $this->mappings[$type]->getResourceUrl()
+        );
+    }
+
+    /**
      * @param array  $data
      * @param array  $value
      * @param string $propertyName
      * @param string $type
      */
-    private function addEmbeddedResourceLinks(array &$data, array &$value, $propertyName, $type)
+    private function addEmbeddedResourceAdditionalLinks(array &$data, array &$value, $propertyName, $type)
     {
         $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY] = array_merge(
             $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY],
@@ -367,44 +377,12 @@ class HalJsonTransformer extends Transformer
     {
         RecursiveDeleteHelper::deleteKeys($data, [Serializer::CLASS_IDENTIFIER_KEY]);
         RecursiveDeleteHelper::deleteKeys($data, [Serializer::MAP_TYPE]);
-
         RecursiveFormatterHelper::formatScalarValues($data);
-
-        self::flattenObjectsWithSingleKeyScalars($data);
-
+        AttributeFormatterHelper::flattenObjectsWithSingleKeyScalars($data);
         $this->recursiveSetKeysToUnderScore($data);
         $this->setResponseMeta($data);
 
         return $data;
-    }
-
-    /**
-     * Simplifies the data structure by removing an array level if data is scalar and has one element in array.
-     *
-     * @param array $array
-     */
-    protected static function flattenObjectsWithSingleKeyScalars(array &$array)
-    {
-        if (1 === count($array) && is_scalar(end($array))) {
-            $array = array_pop($array);
-        }
-
-        if (is_array($array)) {
-            self::loopScalarValues($array, 'flattenObjectsWithSingleKeyScalars');
-        }
-    }
-
-    /**
-     * @param array  $array
-     * @param string $method
-     */
-    protected static function loopScalarValues(array &$array, $method)
-    {
-        foreach ($array as $propertyName => &$value) {
-            if (is_array($value) && self::LINKS_KEY !== $propertyName) {
-                self::$method($value);
-            }
-        }
     }
 
     /**
