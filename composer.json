@@ -4,7 +4,7 @@
     "description": "HAL+JSON API transformer outputting valid API responses.",
     "keywords": ["json", "api", "hal", "serializer", "transformer", "psr7", "response"],
     "homepage": "http://nilportugues.com",
-    "license": "GPL-3.0",
+    "license": "MIT",
     "authors": [
         {
             "name": "Nil Portugués Calderó",
