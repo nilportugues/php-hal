@@ -1,7 +1,7 @@
 {
     "name": "nilportugues/haljson",
     "type": "library",
-    "description": "HAL+JSON API format transformers outputting valid API responses.",
+    "description": "HAL+JSON API transformer outputting valid API responses.",
     "keywords": ["json", "api", "hal", "serializer", "transformer", "psr7", "response"],
     "homepage": "http://nilportugues.com",
     "license": "GPL-3.0",
