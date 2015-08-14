@@ -133,8 +133,7 @@ class HalJsonTransformer extends Transformer
         if (!empty($value[Serializer::CLASS_IDENTIFIER_KEY])) {
             $type = $value[Serializer::CLASS_IDENTIFIER_KEY];
 
-            $curie = $this->mappings[$type]->getCuries();
-            $this->curies[$curie['name']] = $curie;
+            $this->addCurieForResource($type);
 
             $idProperties = $this->mappings[$type]->getIdProperties();
 
@@ -158,7 +157,10 @@ class HalJsonTransformer extends Transformer
                     $this->addHrefToLinks($this->getResponseAdditionalLinks($value, $type))
                 );
 
-                $data[self::LINKS_KEY][$this->getPropertyNameWithCurie($type, $propertyName)][self::LINKS_HREF] = str_replace(
+                $data[self::LINKS_KEY][$this->getPropertyNameWithCurie(
+                    $type,
+                    $propertyName
+                )][self::LINKS_HREF] = str_replace(
                     $idProperties,
                     $idValues,
                     $this->mappings[$type]->getResourceUrl()
@@ -167,6 +169,15 @@ class HalJsonTransformer extends Transformer
                 unset($data[$propertyName]);
             }
         }
+    }
+
+    /**
+     * @param string $type
+     */
+    private function addCurieForResource($type)
+    {
+        $curie = $this->mappings[$type]->getCuries();
+        $this->curies[$curie['name']] = $curie;
     }
 
     /**
@@ -228,32 +239,41 @@ class HalJsonTransformer extends Transformer
         if (!empty($value[Serializer::MAP_TYPE])) {
             foreach ($value as &$arrayValue) {
                 if (is_array($arrayValue)) {
-                    foreach ($arrayValue as $inArrayProperty => &$inArrayValue) {
-                        if ($this->isResourceInArray($inArrayValue)) {
-                            $this->setEmbeddedResources($inArrayValue);
-
-                            $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty] = $inArrayValue;
-                            $type = $inArrayValue[Serializer::CLASS_IDENTIFIER_KEY];
-
-                            $curie = $this->mappings[$type]->getCuries();
-                            $this->curies[$curie['name']] = $curie;
-
-                            list($idValues, $idProperties) = RecursiveFormatterHelper::getIdPropertyAndValues(
-                                $this->mappings,
-                                $inArrayValue,
-                                $type
-                            );
-
-                            $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
-                                $idProperties,
-                                $idValues,
-                                $this->mappings[$type]->getResourceUrl()
-                            );
-
-                            unset($data[$propertyName]);
-                        }
-                    }
+                    $this->setEmbeddedArrayValue($data, $propertyName, $arrayValue);
                 }
+            }
+        }
+    }
+
+    /**
+     * @param array  $data
+     * @param string $propertyName
+     * @param array  $arrayValue
+     */
+    private function setEmbeddedArrayValue(array &$data, $propertyName, array &$arrayValue)
+    {
+        foreach ($arrayValue as $inArrayProperty => &$inArrayValue) {
+            if ($this->isResourceInArray($inArrayValue)) {
+                $this->setEmbeddedResources($inArrayValue);
+
+                $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty] = $inArrayValue;
+                $type = $inArrayValue[Serializer::CLASS_IDENTIFIER_KEY];
+
+                $this->addCurieForResource($type);
+
+                list($idValues, $idProperties) = RecursiveFormatterHelper::getIdPropertyAndValues(
+                    $this->mappings,
+                    $inArrayValue,
+                    $type
+                );
+
+                $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
+                    $idProperties,
+                    $idValues,
+                    $this->mappings[$type]->getResourceUrl()
+                );
+
+                unset($data[$propertyName]);
             }
         }
     }
