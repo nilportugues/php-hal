@@ -16,13 +16,13 @@ use NilPortugues\Api\Mapping\Mapper;
 use NilPortugues\Api\Mapping\Mapping;
 use NilPortugues\Api\Transformer\TransformerException;
 use NilPortugues\Serializer\Serializer;
-use NilPortugues\Tests\Api\Dummy\ComplexObject\Comment;
-use NilPortugues\Tests\Api\Dummy\ComplexObject\Post;
-use NilPortugues\Tests\Api\Dummy\ComplexObject\User;
-use NilPortugues\Tests\Api\Dummy\ComplexObject\ValueObject\CommentId;
-use NilPortugues\Tests\Api\Dummy\ComplexObject\ValueObject\PostId;
-use NilPortugues\Tests\Api\Dummy\ComplexObject\ValueObject\UserId;
-use NilPortugues\Tests\Api\Dummy\SimpleObject\Post as SimplePost;
+use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\Comment;
+use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\Post;
+use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\User;
+use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\CommentId;
+use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\PostId;
+use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\UserId;
+use NilPortugues\Tests\Api\HalJson\Dummy\SimpleObject\Post as SimplePost;
 
 class HalJsonTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,13 +50,15 @@ class HalJsonTransformerTest extends \PHPUnit_Framework_TestCase
         "post_id": 1,
         "title": "post title 1",
         "body": "post body 1",
-        "author_id": 4
+        "author_id": 4,
+        "comments": []
     },
     {
         "post_id": 2,
         "title": "post title 2",
         "body": "post body 2",
-        "author_id": 5
+        "author_id": 5,
+        "comments": []
     }
 ]
 JSON;
