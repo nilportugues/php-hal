@@ -12,3 +12,22 @@
 (https://packagist.org/packages/nilportugues/haljson) [![License]
 (https://poser.pugx.org/nilportugues/haljson/license)]
 (https://packagist.org/packages/nilportugues/haljson) 
+
+## Quality
+
+To run the PHPUnit tests at the command line, go to the tests directory and issue phpunit.
+
+This library attempts to comply with [PSR-1](http://www.php-fig.org/psr/psr-1/), [PSR-2](http://www.php-fig.org/psr/psr-2/), [PSR-4](http://www.php-fig.org/psr/psr-4/) and [PSR-7](http://www.php-fig.org/psr/psr-7/).
+
+If you notice compliance oversights, please send a patch via pull request.
+
+
+## Author
+
+Nil Portugués Calderó
+
+ - <contact@nilportugues.com>
+ - [http://nilportugues.com](http://nilportugues.com)
+
+## License
+The code base is licensed under the MIT license.
