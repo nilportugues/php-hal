@@ -3,6 +3,7 @@
 namespace NilPortugues\Api\HalJson;
 
 use NilPortugues\Api\HalJson\Helpers\AttributeFormatterHelper;
+use NilPortugues\Api\HalJson\Helpers\CuriesHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveDeleteHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveFormatterHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveRenamerHelper;
@@ -131,10 +132,9 @@ class HalJsonTransformer extends Transformer
     private function setEmbeddedForResource(array &$data, array &$value, $propertyName)
     {
         if (!empty($value[Serializer::CLASS_IDENTIFIER_KEY])) {
-
             $type = $value[Serializer::CLASS_IDENTIFIER_KEY];
             $idProperties = $this->mappings[$type]->getIdProperties();
-            $this->addCurieForResource($type);
+            CuriesHelper::addCurieForResource($this->mappings, $this->curies, $type);
 
             if (false === in_array($propertyName, $idProperties)) {
                 $data[self::EMBEDDED_KEY][$propertyName] = $value;
@@ -155,19 +155,10 @@ class HalJsonTransformer extends Transformer
     }
 
     /**
-     * @param string $type
-     */
-    private function addCurieForResource($type)
-    {
-        $curie = $this->mappings[$type]->getCuries();
-        $this->curies[$curie['name']] = $curie;
-    }
-
-    /**
-     * @param array $data
+     * @param array  $data
      * @param string $propertyName
-     * @param array $idProperties
-     * @param array $idValues
+     * @param array  $idProperties
+     * @param array  $idValues
      * @param string $type
      */
     private function addEmbeddedResourceLinks(array &$data, $propertyName, array &$idProperties, array &$idValues, $type)
@@ -288,7 +279,7 @@ class HalJsonTransformer extends Transformer
                 $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty] = $inArrayValue;
                 $type = $inArrayValue[Serializer::CLASS_IDENTIFIER_KEY];
 
-                $this->addCurieForResource($type);
+                CuriesHelper::addCurieForResource($this->mappings, $this->curies, $type);
                 $this->addArrayValueResourceToEmbedded($data, $propertyName, $type, $inArrayProperty, $inArrayValue);
 
                 unset($data[$propertyName]);
@@ -335,7 +326,7 @@ class HalJsonTransformer extends Transformer
     {
         if (!empty($data[Serializer::CLASS_IDENTIFIER_KEY])) {
             $data[self::LINKS_KEY] = array_merge(
-                $this->buildCuries(),
+                CuriesHelper::buildCuries($this->curies),
                 $this->addHrefToLinks($this->buildLinks()),
                 (!empty($data[self::LINKS_KEY])) ? $data[self::LINKS_KEY] : [],
                 $this->addHrefToLinks($this->getResponseAdditionalLinks($data, $data[Serializer::CLASS_IDENTIFIER_KEY]))
@@ -347,25 +338,6 @@ class HalJsonTransformer extends Transformer
                 unset($data[self::LINKS_KEY]);
             }
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function buildCuries()
-    {
-        $curies = [];
-        $this->curies = (array) array_filter($this->curies);
-
-        if (!empty($this->curies)) {
-            $curies = [self::LINKS_CURIES => array_values($this->curies)];
-
-            foreach ($curies[self::LINKS_CURIES] as &$value) {
-                $value[self::LINKS_TEMPLATED_KEY] = true;
-            }
-        }
-
-        return (!empty($curies)) ? $curies : [];
     }
 
     /**
