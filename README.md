@@ -1,5 +1,7 @@
 # HAL+JSON API Transformer
 
+[![Join the chat at https://gitter.im/nilportugues/hal-json-transformer](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nilportugues/hal-json-transformer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status]
 (https://travis-ci.org/nilportugues/hal-json-transformer.svg)]
 (https://travis-ci.org/nilportugues/hal-json-transformer) [![Coverage Status](https://coveralls.io/repos/nilportugues/hal-json-transformer/badge.svg?branch=master&service=github?)](https://coveralls.io/github/nilportugues/hal-json-transformer?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nilportugues/hal-json-transformer/badges/quality-score.png?b=master)]
