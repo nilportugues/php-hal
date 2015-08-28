@@ -133,24 +133,27 @@ class HalJsonTransformer extends Transformer
     {
         if (!empty($value[Serializer::CLASS_IDENTIFIER_KEY])) {
             $type = $value[Serializer::CLASS_IDENTIFIER_KEY];
-            $idProperties = $this->mappings[$type]->getIdProperties();
-            CuriesHelper::addCurieForResource($this->mappings, $this->curies, $type);
+            if(is_scalar($type)) {
+                $idProperties = $this->mappings[$type]->getIdProperties();
+                CuriesHelper::addCurieForResource($this->mappings, $this->curies, $type);
 
-            if (false === in_array($propertyName, $idProperties)) {
-                $data[self::EMBEDDED_KEY][$propertyName] = $value;
+                if (false === in_array($propertyName, $idProperties)) {
+                    $data[self::EMBEDDED_KEY][$propertyName] = $value;
 
-                list($idValues, $idProperties) = RecursiveFormatterHelper::getIdPropertyAndValues(
-                    $this->mappings,
-                    $value,
-                    $type
-                );
+                    list($idValues, $idProperties) = RecursiveFormatterHelper::getIdPropertyAndValues(
+                        $this->mappings,
+                        $value,
+                        $type
+                    );
 
-                $this->addEmbeddedResourceLinks($data, $propertyName, $idProperties, $idValues, $type);
-                $this->addEmbeddedResourceAdditionalLinks($data, $value, $propertyName, $type);
-                $this->addEmbeddedResourceLinkToLinks($data, $propertyName, $idProperties, $idValues, $type);
+                    $this->addEmbeddedResourceLinks($data, $propertyName, $idProperties, $idValues, $type);
+                    $this->addEmbeddedResourceAdditionalLinks($data, $value, $propertyName, $type);
+                    $this->addEmbeddedResourceLinkToLinks($data, $propertyName, $idProperties, $idValues, $type);
 
-                unset($data[$propertyName]);
+                    unset($data[$propertyName]);
+                }
             }
+
         }
     }
 
