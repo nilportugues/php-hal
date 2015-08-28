@@ -161,12 +161,12 @@ Calling the transformer will output a **valid HAL+JSON response** using the corr
 ```php
 use NilPortugues\Api\HalJson\HalJsonTransformer; 
 use NilPortugues\Api\HalJson\Http\Message\Response;
-use NilPortugues\Serializer\Serializer;
+use NilPortugues\Serializer\DeepCopySerializer;
 
 $transformer = new HalJsonTransformer($mapper);
 
 //Output transformation
-$serializer = new Serializer($transformer);
+$serializer = new DeepCopySerializer($transformer);
 $serializer->setSelfUrl('http://example.com/posts/9');
 $serializer->setNextUrl('http://example.com/posts/10');
 $serializer->addMeta('author',[['name' => 'Nil Portugués Calderó', 'email' => 'contact@nilportugues.com']]);
