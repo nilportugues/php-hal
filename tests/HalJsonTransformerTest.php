@@ -45,22 +45,25 @@ class HalJsonTransformerTest extends \PHPUnit_Framework_TestCase
         $transformer = new HalJsonTransformer($mapper);
 
         $expected = <<<JSON
-[
-    {
-        "post_id": 1,
-        "title": "post title 1",
-        "body": "post body 1",
-        "author_id": 4,
-        "comments": []
-    },
-    {
-        "post_id": 2,
-        "title": "post title 2",
-        "body": "post body 2",
-        "author_id": 5,
-        "comments": []
-    }
-]
+{
+    "total": 2,
+    "_embedded": [
+        {
+            "post_id": 1,
+            "title": "post title 1",
+            "body": "post body 1",
+            "author_id": 4,
+            "comments": []
+        },
+        {
+            "post_id": 2,
+            "title": "post title 2",
+            "body": "post body 2",
+            "author_id": 5,
+            "comments": []
+        }
+    ]
+}
 JSON;
 
         $this->assertEquals(

@@ -56,10 +56,10 @@ class HalJsonTransformer extends Transformer
         $this->noMappingGuard();
 
         if (is_array($value) && !empty($value[Serializer::MAP_TYPE])) {
-            $data = [];
+            $data = ['total' => count($value)];
             unset($value[Serializer::MAP_TYPE]);
             foreach ($value[Serializer::SCALAR_VALUE] as $v) {
-                $data[] = $this->serializeObject($v);
+                $data[self::EMBEDDED_KEY][] = $this->serializeObject($v);
             }
         } else {
             $data = $this->serializeObject($value);
