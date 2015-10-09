@@ -133,7 +133,7 @@ class HalJsonTransformer extends Transformer
     {
         if (!empty($value[Serializer::CLASS_IDENTIFIER_KEY])) {
             $type = $value[Serializer::CLASS_IDENTIFIER_KEY];
-            if(is_scalar($type)) {
+            if (is_scalar($type)) {
                 $idProperties = $this->mappings[$type]->getIdProperties();
                 CuriesHelper::addCurieForResource($this->mappings, $this->curies, $type);
 
@@ -153,7 +153,10 @@ class HalJsonTransformer extends Transformer
                     unset($data[$propertyName]);
                 }
             }
-
+        } else {
+            // print_r(func_get_args());
+            //  die();
+            $data[$propertyName] = $value;
         }
     }
 
@@ -166,11 +169,15 @@ class HalJsonTransformer extends Transformer
      */
     private function addEmbeddedResourceLinks(array &$data, $propertyName, array &$idProperties, array &$idValues, $type)
     {
-        $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
+        $href = str_replace(
             $idProperties,
             $idValues,
             $this->mappings[$type]->getResourceUrl()
         );
+
+        if ($href != $this->mappings[$type]->getResourceUrl()) {
+            $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = $href;
+        }
     }
 
     /**
@@ -181,8 +188,14 @@ class HalJsonTransformer extends Transformer
      */
     private function addEmbeddedResourceAdditionalLinks(array &$data, array &$value, $propertyName, $type)
     {
+        $links = [];
+
+        if (!empty($data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY])) {
+            $links = $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY];
+        }
+
         $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY] = array_merge(
-            $data[self::EMBEDDED_KEY][$propertyName][self::LINKS_KEY],
+            $links,
             $this->addHrefToLinks($this->getResponseAdditionalLinks($value, $type))
         );
     }
@@ -202,8 +215,13 @@ class HalJsonTransformer extends Transformer
             $type
         );
 
-        $otherUrls = str_replace($idProperties, $idValues, $otherUrls);
+        $newOtherUrls = str_replace($idProperties, $idValues, $otherUrls);
 
+        if ($newOtherUrls == $otherUrls) {
+            return [];
+        }
+
+        $otherUrls = $newOtherUrls;
         foreach ($otherUrls as $propertyName => $value) {
             $curieName = $this->getPropertyNameWithCurie($type, $propertyName);
             $otherUrls[$curieName] = $value;
@@ -245,11 +263,15 @@ class HalJsonTransformer extends Transformer
      */
     private function addEmbeddedResourceLinkToLinks(array &$data, $propertyName, array &$idProperties, array &$idValues, $type)
     {
-        $data[self::LINKS_KEY][$this->getPropertyNameWithCurie($type, $propertyName)][self::LINKS_HREF] = str_replace(
+        $href = str_replace(
             $idProperties,
             $idValues,
             $this->mappings[$type]->getResourceUrl()
         );
+
+        if ($href != $this->mappings[$type]->getResourceUrl()) {
+            $data[self::LINKS_KEY][$this->getPropertyNameWithCurie($type, $propertyName)][self::LINKS_HREF] = $href;
+        }
     }
 
     /**
@@ -315,11 +337,15 @@ class HalJsonTransformer extends Transformer
             $type
         );
 
-        $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = str_replace(
+        $href = str_replace(
             $idProperties,
             $idValues,
             $this->mappings[$type]->getResourceUrl()
         );
+
+        if ($href != $this->mappings[$type]->getResourceUrl()) {
+            $data[self::EMBEDDED_KEY][$propertyName][$inArrayProperty][self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = $href;
+        }
     }
 
     /**

@@ -43,7 +43,7 @@ final class CuriesHelper
     public static function addCurieForResource(array &$mappings, array &$curies, $type)
     {
         $curie = $mappings[$type]->getCuries();
-        if(!empty($curie['name'])) {
+        if (!empty($curie['name'])) {
             $curies[$curie['name']] = $curie;
         }
     }
