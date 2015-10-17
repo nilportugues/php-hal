@@ -15,6 +15,12 @@ use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\UserId;
 
 class Post
 {
+    private $postId;
+    private $title;
+    private $content;
+    private $author;
+    private $comments;
+    
     /**
      * @param PostId $id
      * @param $title
