@@ -20,7 +20,7 @@ class Post
     private $content;
     private $author;
     private $comments;
-    
+
     /**
      * @param PostId $id
      * @param $title
