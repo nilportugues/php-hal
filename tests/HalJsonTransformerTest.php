@@ -659,4 +659,260 @@ JSON;
 
         return $post;
     }
+
+    public function testItCanBuildUrlsFromClassNameOrClassAlias()
+    {
+        $mappings = [
+            [
+                'class' => Post::class,
+                'alias' => 'Message',
+                'aliased_properties' => [
+                    'author' => 'author',
+                    'title' => 'headline',
+                    'content' => 'body',
+                ],
+                'hide_properties' => [
+
+                ],
+                'id_properties' => [
+                    'postId',
+                ],
+                'urls' => [
+                    // Mandatory
+                    'self' => 'http://example.com/posts/{Message}',
+                    // Optional
+                    'comments' => 'http://example.com/posts/{Message}/comments',
+                ],
+                // (Optional) Used by HAL+JSON
+                'curies' => [
+                    'name' => 'example',
+                    'href' => 'http://example.com/docs/rels/{rel}',
+                ],
+            ],
+            [
+                'class' => PostId::class,
+                'alias' => '',
+                'aliased_properties' => [],
+                'hide_properties' => [],
+                'id_properties' => [
+                    'postId',
+                ],
+                'urls' => [
+                    'self' => 'http://example.com/posts/{PostId}',
+                    'relationships' => [
+                        Comment::class => 'http://example.com/posts/{PostId}/relationships/comments',
+                    ],
+                ],
+                // (Optional) Used by HAL+JSON
+                'curies' => [
+                    'name' => 'example',
+                    'href' => 'http://example.com/docs/rels/{rel}',
+                ],
+            ],
+            [
+                'class' => User::class,
+                'alias' => '',
+                'aliased_properties' => [],
+                'hide_properties' => [],
+                'id_properties' => [
+                    'userId',
+                ],
+                'urls' => [
+                    'self' => 'http://example.com/users/{User}',
+                    'friends' => 'http://example.com/users/{User}/friends',
+                    'comments' => 'http://example.com/users/{User}/comments',
+                ],
+                // (Optional) Used by HAL+JSON
+                'curies' => [
+                    'name' => 'example',
+                    'href' => 'http://example.com/docs/rels/{rel}',
+                ],
+            ],
+            [
+                'class' => UserId::class,
+                'alias' => '',
+                'aliased_properties' => [],
+                'hide_properties' => [],
+                'id_properties' => [
+                    'userId',
+                ],
+                'urls' => [
+                    'self' => 'http://example.com/users/{UserId}',
+                    'friends' => 'http://example.com/users/{UserId}/friends',
+                    'comments' => 'http://example.com/users/{UserId}/comments',
+                ],
+                // (Optional) Used by HAL+JSON
+                'curies' => [
+                    'name' => 'example',
+                    'href' => 'http://example.com/docs/rels/{rel}',
+                ],
+            ],
+            [
+                'class' => Comment::class,
+                'alias' => '',
+                'aliased_properties' => [],
+                'hide_properties' => [],
+                'id_properties' => [
+                    'commentId',
+                ],
+                'urls' => [
+                    'self' => 'http://example.com/comments/{Comment}',
+                ],
+                // (Optional) Used by HAL+JSON
+                'curies' => [
+                    'name' => 'example',
+                    'href' => 'http://example.com/docs/rels/{rel}',
+                ],
+            ],
+            [
+                'class' => CommentId::class,
+                'alias' => '',
+                'aliased_properties' => [],
+                'hide_properties' => [],
+                'id_properties' => [
+                    'commentId',
+                ],
+                'urls' => [
+                    'self' => 'http://example.com/comments/{CommentId}',
+                ],
+                // (Optional) Used by HAL+JSON
+                'curies' => [
+                    'name' => 'example',
+                    'href' => 'http://example.com/docs/rels/{rel}',
+                ],
+            ],
+        ];
+
+        $mapper = new Mapper($mappings);
+
+        $expected = <<<JSON
+{
+   "post_id":9,
+   "headline":"Hello World",
+   "body":"Your first post",
+   "_embedded":{
+      "author":{
+         "user_id":1,
+         "name":"Post Author",
+         "_links":{
+            "self":{
+               "href":"http://example.com/users/1"
+            },
+            "example:friends":{
+               "href":"http://example.com/users/1/friends"
+            },
+            "example:comments":{
+               "href":"http://example.com/users/1/comments"
+            }
+         }
+      },
+      "comments":[
+         {
+            "comment_id":1000,
+            "dates":{
+               "created_at":"2015-07-18T12:13:00+00:00",
+               "accepted_at":"2015-07-19T00:00:00+00:00"
+            },
+            "comment":"Have no fear, sers, your king is safe.",
+            "_embedded":{
+               "user":{
+                  "user_id":2,
+                  "name":"Barristan Selmy",
+                  "_links":{
+                     "self":{
+                        "href":"http://example.com/users/2"
+                     },
+                     "example:friends":{
+                        "href":"http://example.com/users/2/friends"
+                     },
+                     "example:comments":{
+                        "href":"http://example.com/users/2/comments"
+                     }
+                  }
+               }
+            },
+            "_links":{
+               "example:user":{
+                  "href":"http://example.com/users/2"
+               },
+               "self":{
+                  "href":"http://example.com/comments/1000"
+               }
+            }
+         }
+      ]
+   },
+   "_links":{
+      "curies":[
+         {
+            "name":"example",
+            "href":"http://example.com/docs/rels/{rel}",
+            "templated":true
+         }
+      ],
+      "self":{
+         "href":"http://example.com/posts/9"
+      },
+      "first":{
+         "href":"http://example.com/posts/1"
+      },
+      "next":{
+         "href":"http://example.com/posts/10"
+      },
+      "example:author":{
+         "href":"http://example.com/users/1"
+      },
+      "example:comments":{
+         "href":"http://example.com/posts/9/comments"
+      }
+   },
+   "_meta":{
+      "author":{
+         "name":"Nil Portugués Calderó",
+         "email":"contact@nilportugues.com"
+      },
+      "is_devel":true
+   }
+}
+JSON;
+        $post = new Post(
+            new PostId(9),
+            'Hello World',
+            'Your first post',
+            new User(
+                new UserId(1),
+                'Post Author'
+            ),
+            [
+                new Comment(
+                    new CommentId(1000),
+                    'Have no fear, sers, your king is safe.',
+                    new User(new UserId(2), 'Barristan Selmy'),
+                    [
+                        'created_at' => (new DateTime('2015-07-18T12:13:00+00:00'))->format('c'),
+                        'accepted_at' => (new DateTime('2015-07-19T00:00:00+00:00'))->format('c'),
+                    ]
+                ),
+            ]
+        );
+
+        $transformer = new HalJsonTransformer($mapper);
+        $transformer->setMeta(
+            [
+                'author' => [
+                    'name' => 'Nil Portugués Calderó',
+                    'email' => 'contact@nilportugues.com',
+                ],
+            ]
+        );
+        $transformer->addMeta('is_devel', true);
+        $transformer->setSelfUrl('http://example.com/posts/9');
+        $transformer->setFirstUrl('http://example.com/posts/1');
+        $transformer->setNextUrl('http://example.com/posts/10');
+
+        $this->assertEquals(
+            json_decode($expected, true),
+            json_decode((new Serializer($transformer))->serialize($post), true)
+        );
+    }
 }
