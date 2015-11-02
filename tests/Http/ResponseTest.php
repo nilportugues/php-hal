@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace NilPortugues\Tests\Api\HalJson\Http\Message;
 
 use NilPortugues\Api\HalJson\Http\Message\Response;
@@ -16,7 +17,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     public function testResponse()
     {
-        $json = json_encode([]);
+        $json = \json_encode([]);
         $response = new Response($json);
 
         $this->assertEquals(200, $response->getStatusCode());

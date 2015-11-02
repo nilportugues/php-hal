@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace NilPortugues\Tests\Api\HalJson\Http\Message;
 
 use NilPortugues\Api\HalJson\Http\Message\ResourceNotFoundResponse;
@@ -16,7 +17,7 @@ class ResourceNotFoundResponseTest extends \PHPUnit_Framework_TestCase
 {
     public function testResponse()
     {
-        $json = json_encode([]);
+        $json = \json_encode([]);
         $response = new ResourceNotFoundResponse($json);
 
         $this->assertEquals(404, $response->getStatusCode());

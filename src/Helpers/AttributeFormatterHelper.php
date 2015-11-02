@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace NilPortugues\Api\HalJson\Helpers;
 
 use NilPortugues\Api\HalJson\HalJsonTransformer;
@@ -21,11 +22,11 @@ final class AttributeFormatterHelper
      */
     public static function flattenObjectsWithSingleKeyScalars(array &$array)
     {
-        if (1 === count($array) && is_scalar(end($array))) {
-            $array = array_pop($array);
+        if (1 === \count($array) && \is_scalar(\end($array))) {
+            $array = \array_pop($array);
         }
 
-        if (is_array($array)) {
+        if (\is_array($array)) {
             self::loopScalarValues($array, 'flattenObjectsWithSingleKeyScalars');
         }
     }
@@ -37,7 +38,7 @@ final class AttributeFormatterHelper
     private static function loopScalarValues(array &$array, $method)
     {
         foreach ($array as $propertyName => &$value) {
-            if (is_array($value) && HalJsonTransformer::LINKS_KEY !== $propertyName) {
+            if (\is_array($value) && HalJsonTransformer::LINKS_KEY !== $propertyName) {
                 self::$method($value);
             }
         }

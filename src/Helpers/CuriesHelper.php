@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace NilPortugues\Api\HalJson\Helpers;
 
 use NilPortugues\Api\HalJson\HalJsonTransformer;
@@ -22,10 +23,10 @@ final class CuriesHelper
     public static function buildCuries(array $curies)
     {
         $curiesArray = [];
-        $curies = (array) array_filter($curies);
+        $curies = (array) \array_filter($curies);
 
         if (!empty($curies)) {
-            $curiesArray = [HalJsonTransformer::LINKS_CURIES => array_values($curies)];
+            $curiesArray = [HalJsonTransformer::LINKS_CURIES => \array_values($curies)];
 
             foreach ($curiesArray[HalJsonTransformer::LINKS_CURIES] as &$value) {
                 $value[HalJsonTransformer::LINKS_TEMPLATED_KEY] = true;

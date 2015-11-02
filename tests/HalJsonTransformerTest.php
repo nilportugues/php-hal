@@ -8,6 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace NilPortugues\Tests\Api\HalJson;
 
 use DateTime;
@@ -67,8 +68,8 @@ class HalJsonTransformerTest extends \PHPUnit_Framework_TestCase
 JSON;
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($postArray), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($postArray), true)
         );
     }
 
@@ -338,8 +339,8 @@ JSON;
         $transformer->setNextUrl('http://example.com/posts/10');
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($post), true)
         );
     }
 
@@ -399,8 +400,8 @@ JSON;
 JSON;
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($post), true)
         );
     }
 
@@ -461,8 +462,8 @@ JSON;
 JSON;
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($post), true)
         );
     }
 
@@ -521,8 +522,8 @@ JSON;
 JSON;
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($post), true)
         );
     }
 
@@ -580,8 +581,8 @@ JSON;
 JSON;
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($post), true)
         );
     }
 
@@ -639,8 +640,8 @@ JSON;
 JSON;
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($post), true)
         );
     }
 
@@ -911,8 +912,8 @@ JSON;
         $transformer->setNextUrl('http://example.com/posts/10');
 
         $this->assertEquals(
-            json_decode($expected, true),
-            json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode($expected, true),
+            \json_decode((new Serializer($transformer))->serialize($post), true)
         );
     }
 }
