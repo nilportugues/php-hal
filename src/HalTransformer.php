@@ -21,3 +21,4 @@ interface HalTransformer extends StrategyInterface
      */
     public function serialize($value);
 }
+ 
