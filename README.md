@@ -18,7 +18,7 @@
 Use [Composer](https://getcomposer.org) to install the package:
 
 ```json
-$ composer require nilportugues/haljson
+$ composer require nilportugues/hal
 ```
 
 ## Usage
