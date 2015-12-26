@@ -384,7 +384,7 @@ To run the PHPUnit tests at the command line, go to the tests directory and issu
 
 This library attempts to comply with [PSR-1](http://www.php-fig.org/psr/psr-1/), [PSR-2](http://www.php-fig.org/psr/psr-2/), [PSR-4](http://www.php-fig.org/psr/psr-4/) and [PSR-7](http://www.php-fig.org/psr/psr-7/).
 
-If you notice compliance oversights, please send a patch via [Pull Request](https://github.com/nilportugues/hal-json-transformer/pulls).
+If you notice compliance oversights, please send a patch via [Pull Request](https://github.com/nilportugues/hal-transformer/pulls).
 
 
 
@@ -392,8 +392,8 @@ If you notice compliance oversights, please send a patch via [Pull Request](http
 
 Contributions to the package are always welcome!
 
-* Report any bugs or issues you find on the [issue tracker](https://github.com/nilportugues/hal-json-transformer/issues/new).
-* You can grab the source code at the package's [Git repository](https://github.com/nilportugues/hal-json-transformer).
+* Report any bugs or issues you find on the [issue tracker](https://github.com/nilportugues/hal-transformer/issues/new).
+* You can grab the source code at the package's [Git repository](https://github.com/nilportugues/hal-transformer).
 
 
 
@@ -402,15 +402,15 @@ Contributions to the package are always welcome!
 Get in touch with me using one of the following means:
 
  - Emailing me at <contact@nilportugues.com>
- - Opening an [Issue](https://github.com/nilportugues/hal-json-transformer/issues/new)
- - Using Gitter: [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nilportugues/hal-json-transformer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+ - Opening an [Issue](https://github.com/nilportugues/hal-transformer/issues/new)
+ - Using Gitter: [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nilportugues/hal-transformer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
 
 ## Authors
 
 * [Nil Portugués Calderó](http://nilportugues.com)
-* [The Community Contributors](https://github.com/nilportugues/hal-json-transformer/graphs/contributors)
+* [The Community Contributors](https://github.com/nilportugues/hal-transformer/graphs/contributors)
 
 
 ## License
