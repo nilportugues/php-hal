@@ -1,5 +1,5 @@
 {
-    "name": "nilportugues/haljson",
+    "name": "nilportugues/hal",
     "type": "library",
     "description": "HAL+JSON & HAL+XML API transformer outputting valid API responses.",
     "keywords": ["json", "api", "hal", "serializer", "transformer", "psr7", "response"],
