@@ -2,7 +2,7 @@
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 26/12/15
- * Time: 10:37
+ * Time: 10:37.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,4 +21,3 @@ interface HalTransformer extends StrategyInterface
      */
     public function serialize($value);
 }
- 

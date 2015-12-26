@@ -141,7 +141,7 @@ class JsonTransformer extends Transformer implements HalTransformer
     {
         if (!empty($value[Serializer::CLASS_IDENTIFIER_KEY])) {
             $type = $value[Serializer::CLASS_IDENTIFIER_KEY];
-            if (\is_scalar($type)) {
+            if (\is_scalar($type) && !empty($this->mappings[$type])) {
                 $idProperties = $this->mappings[$type]->getIdProperties();
                 CuriesHelper::addCurieForResource($this->mappings, $this->curies, $type);
 

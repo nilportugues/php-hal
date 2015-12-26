@@ -81,33 +81,7 @@ $mappings = [
         ]
     ],
     [
-        'class' => PostId::class,
-        'alias' => '',
-        'aliased_properties' => [],
-        'hide_properties' => [],
-        'id_properties' => [
-            'postId',
-        ],
-        'curies' => [
-            'name' => 'example',
-            'href' => "http://example.com/docs/rels/{rel}",
-        ]
-    ],
-    [
         'class' => User::class,
-        'alias' => '',
-        'aliased_properties' => [],
-        'hide_properties' => [],
-        'id_properties' => [
-            'userId',
-        ],
-        'curies' => [
-            'name' => 'example',
-            'href' => "http://example.com/docs/rels/{rel}",
-        ]
-    ],
-    [
-        'class' => UserId::class,
         'alias' => '',
         'aliased_properties' => [],
         'hide_properties' => [],
@@ -134,23 +108,7 @@ $mappings = [
             'name' => 'example',
             'href' => "http://example.com/docs/rels/{rel}",
         ]
-    ],
-    [
-        'class' => CommentId::class,
-        'alias' => '',
-        'aliased_properties' => [],
-        'hide_properties' => [],
-        'id_properties' => [
-            'commentId',
-        ],
-        'urls' => [
-            'self' => 'http://example.com/comments/{commentId}',
-        ],
-        'curies' => [
-            'name' => 'example',
-            'href' => "http://example.com/docs/rels/{rel}",
-        ]
-    ],
+    ]
 ];
 
 $mapper = new Mapper($mappings);

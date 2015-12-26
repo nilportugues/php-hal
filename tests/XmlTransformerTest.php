@@ -116,26 +116,6 @@ XML;
                 ],
             ],
             [
-                'class' => PostId::class,
-                'alias' => '',
-                'aliased_properties' => [],
-                'hide_properties' => [],
-                'id_properties' => [
-                    'postId',
-                ],
-                'urls' => [
-                    'self' => 'http://example.com/posts/{postId}',
-                    'relationships' => [
-                        Comment::class => 'http://example.com/posts/{postId}/relationships/comments',
-                    ],
-                ],
-                // (Optional) Used by HAL+Xml
-                'curies' => [
-                    'name' => 'example',
-                    'href' => 'http://example.com/docs/rels/{rel}',
-                ],
-            ],
-            [
                 'class' => User::class,
                 'alias' => '',
                 'aliased_properties' => [],
@@ -154,25 +134,7 @@ XML;
                     'href' => 'http://example.com/docs/rels/{rel}',
                 ],
             ],
-            [
-                'class' => UserId::class,
-                'alias' => '',
-                'aliased_properties' => [],
-                'hide_properties' => [],
-                'id_properties' => [
-                    'userId',
-                ],
-                'urls' => [
-                    'self' => 'http://example.com/users/{userId}',
-                    'friends' => 'http://example.com/users/{userId}/friends',
-                    'comments' => 'http://example.com/users/{userId}/comments',
-                ],
-                // (Optional) Used by HAL+Xml
-                'curies' => [
-                    'name' => 'example',
-                    'href' => 'http://example.com/docs/rels/{rel}',
-                ],
-            ],
+
             [
                 'class' => Comment::class,
                 'alias' => '',
