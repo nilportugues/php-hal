@@ -9,7 +9,7 @@
 (https://poser.pugx.org/nilportugues/hal/v/stable)]
 (https://packagist.org/packages/nilportugues/hal) [![Total Downloads]
 (https://poser.pugx.org/nilportugues/hal/downloads)]
-(https://packagist.org/packages/nilportugues/haljson) [![License]
+(https://packagist.org/packages/nilportugues/hal) [![License]
 (https://poser.pugx.org/nilportugues/hal/license)]
 (https://packagist.org/packages/nilportugues/hal) 
 
