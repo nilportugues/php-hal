@@ -160,14 +160,14 @@ Calling the transformer will output a **valid HAL+JSON/HAL+XML response** using 
 
 ```php
 use NilPortugues\Api\Hal\JsonTransformer; 
+use NilPortugues\Api\Hal\HalSerializer;
 use NilPortugues\Api\Hal\Http\Message\Response;
-use NilPortugues\Serializer\DeepCopySerializer;
 
 $transformer = new JsonTransformer($mapper);
 //For XML: $transformer = new XmlTransformer($mapper);
 
 //Output transformation
-$serializer = new DeepCopySerializer($transformer);
+$serializer = new HalSerializer($transformer);
 $serializer->setSelfUrl('http://example.com/posts/9');
 $serializer->setNextUrl('http://example.com/posts/10');
 $serializer->addMeta('author',[['name' => 'Nil Portugués Calderó', 'email' => 'contact@nilportugues.com']]);
