@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject;
+namespace NilPortugues\Tests\Api\Hal\Dummy\ComplexObject;
 
-use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\UserId;
+use NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\ValueObject\UserId;
 
 class User
 {

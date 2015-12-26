@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson\Http\Message;
+namespace NilPortugues\Tests\Api\Hal\Http\Message;
 
-use NilPortugues\Api\HalJson\Http\Message\ResourcePostErrorResponse;
+use NilPortugues\Api\Hal\Http\Response\ResourcePostErrorResponse;
 
 class ResourcePostErrorResponseTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +21,6 @@ class ResourcePostErrorResponseTest extends \PHPUnit_Framework_TestCase
         $response = new ResourcePostErrorResponse($json);
 
         $this->assertEquals(409, $response->getStatusCode());
-        $this->assertEquals(['application/hal+json'], $response->getHeader('Content-type'));
+        $this->assertEquals(['application/hal+json; charset=utf-8'], $response->getHeader('Content-type'));
     }
 }

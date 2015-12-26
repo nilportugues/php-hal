@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson\Http\Message;
+namespace NilPortugues\Tests\Api\Hal\Http\Message;
 
-use NilPortugues\Api\HalJson\Http\Message\ResourceProcessingResponse;
+use NilPortugues\Api\Hal\Http\Response\ResourceProcessingResponse;
 
 class ResourceProcessingResponseTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +21,6 @@ class ResourceProcessingResponseTest extends \PHPUnit_Framework_TestCase
         $response = new ResourceProcessingResponse($json);
 
         $this->assertEquals(202, $response->getStatusCode());
-        $this->assertEquals(['application/hal+json'], $response->getHeader('Content-type'));
+        $this->assertEquals(['application/hal+json; charset=utf-8'], $response->getHeader('Content-type'));
     }
 }

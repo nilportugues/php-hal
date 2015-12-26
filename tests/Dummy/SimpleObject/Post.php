@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson\Dummy\SimpleObject;
+namespace NilPortugues\Tests\Api\Hal\Dummy\SimpleObject;
 
 class Post
 {

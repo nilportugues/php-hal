@@ -9,23 +9,23 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson;
+namespace NilPortugues\Tests\Api\Hal;
 
 use DateTime;
-use NilPortugues\Api\HalJson\HalJsonTransformer;
+use NilPortugues\Api\Hal\JsonTransformer;
 use NilPortugues\Api\Mapping\Mapper;
 use NilPortugues\Api\Mapping\Mapping;
 use NilPortugues\Api\Transformer\TransformerException;
-use NilPortugues\Serializer\Serializer;
-use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\Comment;
-use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\Post;
-use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\User;
-use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\CommentId;
-use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\PostId;
-use NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject\UserId;
-use NilPortugues\Tests\Api\HalJson\Dummy\SimpleObject\Post as SimplePost;
+use NilPortugues\Api\Hal\HalSerializer;
+use NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\Comment;
+use NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\Post;
+use NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\User;
+use NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\ValueObject\CommentId;
+use NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\ValueObject\PostId;
+use NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\ValueObject\UserId;
+use NilPortugues\Tests\Api\Hal\Dummy\SimpleObject\Post as SimplePost;
 
-class HalJsonTransformerTest extends \PHPUnit_Framework_TestCase
+class JsonTransformerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      *
@@ -43,7 +43,7 @@ class HalJsonTransformerTest extends \PHPUnit_Framework_TestCase
         $mapper = new Mapper();
         $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
 
         $expected = <<<JSON
 {
@@ -69,7 +69,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($postArray), true)
+            \json_decode((new HalSerializer($transformer))->serialize($postArray), true)
         );
     }
 
@@ -82,7 +82,7 @@ JSON;
         $mapper->setClassMap([]);
 
         $this->setExpectedException(TransformerException::class);
-        (new Serializer(new HalJsonTransformer($mapper)))->serialize(new \stdClass());
+        (new HalSerializer(new JsonTransformer($mapper)))->serialize(new \stdClass());
     }
 
     /**
@@ -324,7 +324,7 @@ JSON;
             ]
         );
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
         $transformer->setMeta(
             [
                 'author' => [
@@ -340,7 +340,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode((new HalSerializer($transformer))->serialize($post), true)
         );
     }
 
@@ -356,7 +356,7 @@ JSON;
         $mapper = new Mapper();
         $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
 
         $expected = <<<JSON
 {
@@ -401,7 +401,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode((new HalSerializer($transformer))->serialize($post), true)
         );
     }
 
@@ -418,7 +418,7 @@ JSON;
         $mapper = new Mapper();
         $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
 
         $expected = <<<JSON
 {
@@ -463,7 +463,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode((new HalSerializer($transformer))->serialize($post), true)
         );
     }
 
@@ -480,7 +480,7 @@ JSON;
         $mapper = new Mapper();
         $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
 
         $expected = <<<JSON
 {
@@ -523,7 +523,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode((new HalSerializer($transformer))->serialize($post), true)
         );
     }
 
@@ -537,7 +537,7 @@ JSON;
         $mapper = new Mapper();
         $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
 
         $expected = <<<JSON
 {
@@ -582,7 +582,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode((new HalSerializer($transformer))->serialize($post), true)
         );
     }
 
@@ -596,7 +596,7 @@ JSON;
         $mapper = new Mapper();
         $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
 
         $expected = <<<JSON
 {
@@ -641,7 +641,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode((new HalSerializer($transformer))->serialize($post), true)
         );
     }
 
@@ -897,7 +897,7 @@ JSON;
             ]
         );
 
-        $transformer = new HalJsonTransformer($mapper);
+        $transformer = new JsonTransformer($mapper);
         $transformer->setMeta(
             [
                 'author' => [
@@ -913,7 +913,7 @@ JSON;
 
         $this->assertEquals(
             \json_decode($expected, true),
-            \json_decode((new Serializer($transformer))->serialize($post), true)
+            \json_decode((new HalSerializer($transformer))->serialize($post), true)
         );
     }
 }

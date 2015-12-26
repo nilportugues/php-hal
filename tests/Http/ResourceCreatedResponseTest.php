@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson\Http\Message;
+namespace NilPortugues\Tests\Api\Hal\Http\Message;
 
-use NilPortugues\Api\HalJson\Http\Message\ResourceCreatedResponse;
+use NilPortugues\Api\Hal\Http\Response\ResourceCreatedResponse;
 
 class ResourceCreatedResponseTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +21,6 @@ class ResourceCreatedResponseTest extends \PHPUnit_Framework_TestCase
         $response = new ResourceCreatedResponse($json);
 
         $this->assertEquals(201, $response->getStatusCode());
-        $this->assertEquals(['application/hal+json'], $response->getHeader('Content-type'));
+        $this->assertEquals(['application/hal+json; charset=utf-8'], $response->getHeader('Content-type'));
     }
 }

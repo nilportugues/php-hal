@@ -1,4 +1,4 @@
-# HAL+JSON API Transformer
+# HAL+JSON & HAL+XML API Transformer
 
 [![Build Status]
 (https://travis-ci.org/nilportugues/hal-json-transformer.svg)]
@@ -22,7 +22,7 @@ $ composer require nilportugues/haljson
 ```
 
 ## Usage
-Given a PHP Object, and a series of mappings, the HAL+JSON API transformer will represent the given data following the `https://tools.ietf.org/html/draft-kelly-json-hal-07` specification draft.
+Given a PHP Object, and a series of mappings, the HAL+JSON and HAL+XML API transformer will represent the given data following the `https://tools.ietf.org/html/draft-kelly-json-hal-07` specification draft.
 
 For instance, given the following piece of code, defining a Blog Post and some comments:
 
@@ -156,14 +156,15 @@ $mappings = [
 $mapper = new Mapper($mappings);
 ```
 
-Calling the transformer will output a **valid HAL+JSON response** using the correct formatting:
+Calling the transformer will output a **valid HAL+JSON/HAL+XML response** using the correct formatting:
 
 ```php
-use NilPortugues\Api\HalJson\HalJsonTransformer; 
-use NilPortugues\Api\HalJson\Http\Message\Response;
+use NilPortugues\Api\Hal\JsonTransformer; 
+use NilPortugues\Api\Hal\Http\Message\Response;
 use NilPortugues\Serializer\DeepCopySerializer;
 
-$transformer = new HalJsonTransformer($mapper);
+$transformer = new JsonTransformer($mapper);
+//For XML: $transformer = new XmlTransformer($mapper);
 
 //Output transformation
 $serializer = new DeepCopySerializer($transformer);
@@ -288,21 +289,93 @@ Content-type: application/hal+json
 }
 ```
 
+**For XML using `$transformer = new XmlTransformer($mapper);`**
+
+
+```
+HTTP/1.1 200 OK
+Cache-Control: private, max-age=0, must-revalidate
+Content-type: application/hal+xml
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<resource href="http://example.com/posts/9">
+  <post_id><![CDATA[9]]></post_id>
+  <headline><![CDATA[Hello World]]></headline>
+  <body><![CDATA[Your first post]]></body>
+  <embedded>
+    <resource href="http://example.com/users/1" rel="author">
+      <user_id><![CDATA[1]]></user_id>
+      <name><![CDATA[Post Author]]></name>
+      <links>
+        <link rel="self" href="http://example.com/users/1"/>
+        <link rel="example:friends" href="http://example.com/users/1/friends"/>
+        <link rel="example:comments" href="http://example.com/users/1/comments"/>
+      </links>
+    </resource>
+    <comments>
+      <resource href="http://example.com/comments/1000">
+        <comment_id><![CDATA[1000]]></comment_id>
+        <dates>
+          <created_at><![CDATA[2015-07-18T12:13:00+00:00]]></created_at>
+          <accepted_at><![CDATA[2015-07-19T00:00:00+00:00]]></accepted_at>
+        </dates>
+        <comment><![CDATA[Have no fear, sers, your king is safe.]]></comment>
+        <embedded>
+          <resource href="http://example.com/users/2" rel="user">
+            <user_id><![CDATA[2]]></user_id>
+            <name><![CDATA[Barristan Selmy]]></name>
+            <links>
+              <link rel="self" href="http://example.com/users/2"/>
+              <link rel="example:friends" href="http://example.com/users/2/friends"/>
+              <link rel="example:comments" href="http://example.com/users/2/comments"/>
+            </links>
+          </resource>
+        </embedded>
+        <links>
+          <link rel="example:user" href="http://example.com/users/2"/>
+          <link rel="self" href="http://example.com/comments/1000"/>
+        </links>
+      </resource>
+    </comments>
+  </embedded>
+  <links>
+    <curies>
+      <link rel="resource" href="http://example.com/docs/rels/{rel}">
+        <name><![CDATA[example]]></name>
+        <templated><![CDATA[true]]></templated>
+      </link>
+    </curies>
+    <link rel="self" href="http://example.com/posts/9"/>
+    <link rel="first" href="http://example.com/posts/1"/>
+    <link rel="next" href="http://example.com/posts/10"/>
+    <link rel="example:author" href="http://example.com/users/1"/>
+    <link rel="example:comments" href="http://example.com/posts/9/comments"/>
+  </links>
+  <meta>
+    <author>
+      <name><![CDATA[Nil Portugués Calderó]]></name>
+      <email><![CDATA[contact@nilportugues.com]]></email>
+    </author>    
+  </meta>
+</resource>
+```
 
 #### Response objects
 
 The following PSR-7 Response objects providing the right headers and HTTP status codes are available:
 
-- `NilPortugues\Api\HalJson\Http\Message\ErrorResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\ResourceCreatedResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\ResourceDeletedResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\ResourceNotFoundResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\ResourcePatchErrorResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\ResourcePostErrorResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\ResourceProcessingResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\ResourceUpdatedResponse($json)`
-- `NilPortugues\Api\HalJson\Http\Message\Response($json)`
-- `NilPortugues\Api\HalJson\Http\Message\UnsupportedActionResponse($json)`
+- `NilPortugues\Api\Hal\Http\Message\ErrorResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\ResourceCreatedResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\ResourceDeletedResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\ResourceNotFoundResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\ResourcePatchErrorResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\ResourcePostErrorResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\ResourceProcessingResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\ResourceUpdatedResponse($body)`
+- `NilPortugues\Api\Hal\Http\Message\Response($body)`
+- `NilPortugues\Api\Hal\Http\Message\UnsupportedActionResponse($body)`
 
 
 ## Quality

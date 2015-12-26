@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Api\HalJson\Helpers;
+namespace NilPortugues\Api\Hal\Helpers;
 
-use NilPortugues\Api\HalJson\HalJsonTransformer;
+use NilPortugues\Api\Hal\JsonTransformer;
 
 final class CuriesHelper
 {
@@ -26,10 +26,10 @@ final class CuriesHelper
         $curies = (array) \array_filter($curies);
 
         if (!empty($curies)) {
-            $curiesArray = [HalJsonTransformer::LINKS_CURIES => \array_values($curies)];
+            $curiesArray = [JsonTransformer::LINKS_CURIES => \array_values($curies)];
 
-            foreach ($curiesArray[HalJsonTransformer::LINKS_CURIES] as &$value) {
-                $value[HalJsonTransformer::LINKS_TEMPLATED_KEY] = true;
+            foreach ($curiesArray[JsonTransformer::LINKS_CURIES] as &$value) {
+                $value[JsonTransformer::LINKS_TEMPLATED_KEY] = true;
             }
         }
 

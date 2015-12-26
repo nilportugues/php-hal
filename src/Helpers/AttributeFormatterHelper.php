@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Api\HalJson\Helpers;
+namespace NilPortugues\Api\Hal\Helpers;
 
-use NilPortugues\Api\HalJson\HalJsonTransformer;
+use NilPortugues\Api\Hal\JsonTransformer;
 
 final class AttributeFormatterHelper
 {
@@ -38,7 +38,7 @@ final class AttributeFormatterHelper
     private static function loopScalarValues(array &$array, $method)
     {
         foreach ($array as $propertyName => &$value) {
-            if (\is_array($value) && HalJsonTransformer::LINKS_KEY !== $propertyName) {
+            if (\is_array($value) && JsonTransformer::LINKS_KEY !== $propertyName) {
                 self::$method($value);
             }
         }

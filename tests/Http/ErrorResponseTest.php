@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson\Http\Message;
+namespace NilPortugues\Tests\Api\Hal\Http\Message;
 
-use NilPortugues\Api\HalJson\Http\Message\ErrorResponse;
+use NilPortugues\Api\Hal\Http\Response\ErrorResponse;
 
 class ErrorResponseTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,6 +20,6 @@ class ErrorResponseTest extends \PHPUnit_Framework_TestCase
         $response = new ErrorResponse('Internal Server Error', 400);
 
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals(['application/hal+json'], $response->getHeader('Content-type'));
+        $this->assertEquals(['application/hal+json; charset=utf-8'], $response->getHeader('Content-type'));
     }
 }

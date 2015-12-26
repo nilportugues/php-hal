@@ -1,9 +1,9 @@
 <?php
 
-namespace NilPortugues\Api\HalJson;
+namespace NilPortugues\Api\Hal;
 
-use NilPortugues\Api\HalJson\Helpers\AttributeFormatterHelper;
-use NilPortugues\Api\HalJson\Helpers\CuriesHelper;
+use NilPortugues\Api\Hal\Helpers\AttributeFormatterHelper;
+use NilPortugues\Api\Hal\Helpers\CuriesHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveDeleteHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveFormatterHelper;
 use NilPortugues\Api\Transformer\Helpers\RecursiveRenamerHelper;
@@ -15,7 +15,7 @@ use NilPortugues\Serializer\Serializer;
  *
  * @link http://stateless.co/hal_specification.html
  */
-class HalJsonTransformer extends Transformer
+class JsonTransformer extends Transformer implements HalTransformer
 {
     const EMBEDDED_KEY = '_embedded';
     const META_KEY = '_meta';
@@ -42,12 +42,10 @@ class HalJsonTransformer extends Transformer
     /**
      * @var array
      */
-    private $curies = [];
+    protected $curies = [];
 
     /**
      * @param array $value
-     *
-     * @throws \NilPortugues\Api\Transformer\TransformerException
      *
      * @return string
      */
@@ -56,7 +54,7 @@ class HalJsonTransformer extends Transformer
         $this->noMappingGuard();
 
         if (\is_array($value) && !empty($value[Serializer::MAP_TYPE])) {
-            $data = ['total' => \count($value)];
+            $data = ['total' => count($value)];
             unset($value[Serializer::MAP_TYPE]);
             foreach ($value[Serializer::SCALAR_VALUE] as $v) {
                 $data[self::EMBEDDED_KEY][] = $this->serializeObject($v);
@@ -65,6 +63,16 @@ class HalJsonTransformer extends Transformer
             $data = $this->serializeObject($value);
         }
 
+        return $this->outputStrategy($data);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return string
+     */
+    protected function outputStrategy(array &$data)
+    {
         return \json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
@@ -73,7 +81,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return array
      */
-    private function serializeObject(array $value)
+    protected function serializeObject(array $value)
     {
         $value = $this->preSerialization($value);
         $data = $this->serialization($value);
@@ -86,7 +94,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return array
      */
-    private function preSerialization(array $value)
+    protected function preSerialization(array $value)
     {
         /** @var \NilPortugues\Api\Mapping\Mapping $mapping */
         foreach ($this->mappings as $class => $mapping) {
@@ -103,7 +111,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return array
      */
-    private function serialization(array $data)
+    protected function serialization(array $data)
     {
         $this->setEmbeddedResources($data);
         $this->setResponseLinks($data);
@@ -114,7 +122,7 @@ class HalJsonTransformer extends Transformer
     /**
      * @param array $data
      */
-    private function setEmbeddedResources(array &$data)
+    protected function setEmbeddedResources(array &$data)
     {
         foreach ($data as $propertyName => &$value) {
             if (\is_array($value)) {
@@ -129,7 +137,7 @@ class HalJsonTransformer extends Transformer
      * @param array  $value
      * @param string $propertyName
      */
-    private function setEmbeddedForResource(array &$data, array &$value, $propertyName)
+    protected function setEmbeddedForResource(array &$data, array &$value, $propertyName)
     {
         if (!empty($value[Serializer::CLASS_IDENTIFIER_KEY])) {
             $type = $value[Serializer::CLASS_IDENTIFIER_KEY];
@@ -165,7 +173,7 @@ class HalJsonTransformer extends Transformer
      * @param array  $idValues
      * @param string $type
      */
-    private function addEmbeddedResourceLinks(
+    protected function addEmbeddedResourceLinks(
         array &$data,
         $propertyName,
         array &$idProperties,
@@ -191,7 +199,7 @@ class HalJsonTransformer extends Transformer
      * @param string $propertyName
      * @param string $type
      */
-    private function addEmbeddedResourceAdditionalLinks(array &$data, array &$value, $propertyName, $type)
+    protected function addEmbeddedResourceAdditionalLinks(array &$data, array &$value, $propertyName, $type)
     {
         $links = [];
 
@@ -248,11 +256,11 @@ class HalJsonTransformer extends Transformer
      *
      * @return string
      */
-    private function getPropertyNameWithCurie($type, $propertyName)
+    protected function getPropertyNameWithCurie($type, $propertyName)
     {
         $curie = $this->mappings[$type]->getCuries();
         if (!empty($curie)) {
-            $propertyName = \sprintf(
+            $propertyName = sprintf(
                 '%s:%s',
                 $curie['name'],
                 self::camelCaseToUnderscore($propertyName)
@@ -269,7 +277,7 @@ class HalJsonTransformer extends Transformer
      * @param array  $idValues
      * @param string $type
      */
-    private function addEmbeddedResourceLinkToLinks(
+    protected function addEmbeddedResourceLinkToLinks(
         array &$data,
         $propertyName,
         array &$idProperties,
@@ -294,7 +302,7 @@ class HalJsonTransformer extends Transformer
      * @param array  $value
      * @param string $propertyName
      */
-    private function setEmbeddedForResourceArray(array &$data, array &$value, $propertyName)
+    protected function setEmbeddedForResourceArray(array &$data, array &$value, $propertyName)
     {
         if (!empty($value[Serializer::MAP_TYPE])) {
             foreach ($value as &$arrayValue) {
@@ -310,7 +318,7 @@ class HalJsonTransformer extends Transformer
      * @param string $propertyName
      * @param array  $arrayValue
      */
-    private function setEmbeddedArrayValue(array &$data, $propertyName, array &$arrayValue)
+    protected function setEmbeddedArrayValue(array &$data, $propertyName, array &$arrayValue)
     {
         foreach ($arrayValue as $inArrayProperty => &$inArrayValue) {
             if ($this->isResourceInArray($inArrayValue)) {
@@ -332,7 +340,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return bool
      */
-    private function isResourceInArray($inArrayValue)
+    protected function isResourceInArray($inArrayValue)
     {
         return \is_array($inArrayValue) && !empty($inArrayValue[Serializer::CLASS_IDENTIFIER_KEY]);
     }
@@ -344,7 +352,7 @@ class HalJsonTransformer extends Transformer
      * @param string $inArrayProperty
      * @param array  $inArrayValue
      */
-    private function addArrayValueResourceToEmbedded(
+    protected function addArrayValueResourceToEmbedded(
         array &$data,
         $propertyName,
         $type,
@@ -396,7 +404,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return array
      */
-    private function postSerialization(array &$data)
+    protected function postSerialization(array &$data)
     {
         RecursiveDeleteHelper::deleteKeys($data, [Serializer::CLASS_IDENTIFIER_KEY]);
         RecursiveDeleteHelper::deleteKeys($data, [Serializer::MAP_TYPE]);
@@ -411,7 +419,7 @@ class HalJsonTransformer extends Transformer
     /**
      * @param array $response
      */
-    private function setResponseMeta(array &$response)
+    protected function setResponseMeta(array &$response)
     {
         if (!empty($this->meta)) {
             $response[self::META_KEY] = $this->meta;
@@ -427,7 +435,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return mixed
      */
-    private static function buildUrl(array &$mappings, $idProperties, $idValues, $url, $type)
+    protected static function buildUrl(array &$mappings, $idProperties, $idValues, $url, $type)
     {
         $outputUrl = \str_replace($idProperties, $idValues, $url);
         if ($outputUrl !== $url) {
@@ -459,7 +467,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return mixed
      */
-    private static function secondPassBuildUrl($idPropertyName, $idValues, $url)
+    protected static function secondPassBuildUrl($idPropertyName, $idValues, $url)
     {
         if (!empty($idPropertyName)) {
             $outputUrl = self::toCamelCase($idPropertyName, $idValues, $url);
@@ -488,7 +496,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return mixed
      */
-    private static function toCamelCase($original, $idValues, $url)
+    protected static function toCamelCase($original, $idValues, $url)
     {
         foreach ($original as &$o) {
             $o = '{'.self::underscoreToCamelCase(self::camelCaseToUnderscore($o)).'}';
@@ -504,7 +512,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return mixed
      */
-    private static function toLowerFirstCamelCase($original, $idValues, $url)
+    protected static function toLowerFirstCamelCase($original, $idValues, $url)
     {
         foreach ($original as &$o) {
             $o = self::underscoreToCamelCase(self::camelCaseToUnderscore($o));
@@ -522,7 +530,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return mixed
      */
-    private static function toUnderScore($original, $idValues, $url)
+    protected static function toUnderScore($original, $idValues, $url)
     {
         foreach ($original as &$o) {
             $o = '{'.self::camelCaseToUnderscore($o).'}';
@@ -539,7 +547,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return string
      */
-    private static function camelCaseToUnderscore($camel, $splitter = '_')
+    protected static function camelCaseToUnderscore($camel, $splitter = '_')
     {
         $camel = \preg_replace(
             '/(?!^)[[:upper:]][[:lower:]]/',
@@ -557,7 +565,7 @@ class HalJsonTransformer extends Transformer
      *
      * @return string
      */
-    private static function underscoreToCamelCase($string)
+    protected static function underscoreToCamelCase($string)
     {
         return \str_replace(' ', '', \ucwords(\strtolower(\str_replace(['_', '-'], ' ', $string))));
     }

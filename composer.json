@@ -1,8 +1,8 @@
 {
-    "name": "nilportugues/haljson",
+    "name": "nilportugues/hal",
     "type": "library",
-    "description": "HAL+JSON API transformer outputting valid API responses.",
-    "keywords": ["json", "api", "hal", "serializer", "transformer", "psr7", "response"],
+    "description": "HAL+JSON and HAL+XML API transformer outputting valid API responses.",
+    "keywords": ["json", "xml", "api", "hal", "serializer", "transformer", "psr7", "response"],
     "homepage": "http://nilportugues.com",
     "license": "MIT",
     "authors": [
@@ -14,23 +14,20 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "nilportugues/api-transformer": "~1.2",
-        "nilportugues/php_backslasher": "^0.2.1"
+        "nilportugues/api-transformer": "~1.5"
     },
     "require-dev": {
         "phpunit/phpunit": "4.4.*",
-        "fabpot/php-cs-fixer": "^1.9",
-        "mmoreram/php-formatter": "dev-master",
-        "satooshi/php-coveralls": "dev-master"
+        "fabpot/php-cs-fixer": "^1.9"
     },
     "autoload": {
         "psr-4": {
-            "NilPortugues\\Api\\HalJson\\": "src/"
+            "NilPortugues\\Api\\Hal\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "NilPortugues\\Tests\\Api\\HalJson\\": "tests/"
+            "NilPortugues\\Tests\\Api\\Hal\\": "tests/"
         }
     },
     "config": {

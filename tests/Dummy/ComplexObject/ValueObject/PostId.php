@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Tests\Api\HalJson\Dummy\ComplexObject\ValueObject;
+namespace NilPortugues\Tests\Api\Hal\Dummy\ComplexObject\ValueObject;
 
 class PostId
 {

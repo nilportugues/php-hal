@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Api\HalJson\Http\Message;
+namespace NilPortugues\Api\Hal\Http\Response;
 
 class ResourceDeletedResponse extends AbstractResponse
 {

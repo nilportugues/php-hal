@@ -3,18 +3,18 @@
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 7/29/15
- * Time: 12:43 AM.
+ * Time: 12:49 AM.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace NilPortugues\Api\HalJson\Http\Message;
+namespace NilPortugues\Api\Hal\Http\Response;
 
-class ResourceProcessingResponse extends AbstractResponse
+class ResourceUpdatedResponse extends AbstractResponse
 {
     /**
      * @var int
      */
-    protected $httpCode = 202;
+    protected $httpCode = 200;
 }
