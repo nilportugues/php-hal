@@ -1,8 +1,8 @@
 # HAL+JSON & HAL+XML API Transformer
 
 [![Build Status]
-(https://travis-ci.org/nilportugues/hal-transformer.svg)]
-(https://travis-ci.org/nilportugues/hal-transformer) [![Coverage Status](https://coveralls.io/repos/nilportugues/hal-transformer/badge.svg?branch=master&service=github?)](https://coveralls.io/github/nilportugues/hal-transformer?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nilportugues/hal-transformer/badges/quality-score.png?b=master)]
+(https://travis-ci.org/nilportugues/hal.svg)]
+(https://travis-ci.org/nilportugues/hal) [![Coverage Status](https://coveralls.io/repos/nilportugues/hal-transformer/badge.svg?branch=master&service=github?)](https://coveralls.io/github/nilportugues/hal-transformer?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nilportugues/hal-transformer/badges/quality-score.png?b=master)]
 (https://scrutinizer-ci.com/g/nilportugues/hal-transformer/?branch=master) [![SensioLabsInsight]
 (https://insight.sensiolabs.com/projects/e2a5a3b2-7097-4783-9912-0cbaadd0ed0e/mini.png)]
 (https://insight.sensiolabs.com/projects/e2a5a3b2-7097-4783-9912-0cbaadd0ed0e) [![Latest Stable Version]
