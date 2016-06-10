@@ -54,11 +54,13 @@ class JsonTransformer extends Transformer implements HalTransformer
         $this->noMappingGuard();
 
         if (\is_array($value) && !empty($value[Serializer::MAP_TYPE])) {
-            $data = ['total' => count($value)];
+            $data = ['total' => 0];
             unset($value[Serializer::MAP_TYPE]);
+
             foreach ($value[Serializer::SCALAR_VALUE] as $v) {
                 $data[self::EMBEDDED_KEY][] = $this->serializeObject($v);
             }
+            $data['total'] = count($data[self::EMBEDDED_KEY]);
         } else {
             $data = $this->serializeObject($value);
         }
