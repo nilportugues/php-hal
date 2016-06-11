@@ -50,19 +50,25 @@ class XmlTransformerTest extends \PHPUnit_Framework_TestCase
 <resource>
   <total><![CDATA[2]]></total>
   <embedded>
-    <resource>
+    <resource href="/post/1">
       <post_id><![CDATA[1]]></post_id>
       <title><![CDATA[post title 1]]></title>
       <body><![CDATA[post body 1]]></body>
       <author_id><![CDATA[4]]></author_id>
       <comments/>
+      <links>
+        <link rel="self" href="/post/1"/>
+      </links>
     </resource>
-    <resource>
+    <resource href="/post/2">
       <post_id><![CDATA[2]]></post_id>
       <title><![CDATA[post title 2]]></title>
       <body><![CDATA[post body 2]]></body>
       <author_id><![CDATA[5]]></author_id>
       <comments/>
+      <links>
+        <link rel="self" href="/post/2"/>
+      </links>
     </resource>
   </embedded>
 </resource>
@@ -222,11 +228,11 @@ XML;
         <templated><![CDATA[true]]></templated>
       </link>
     </curies>
-    <link rel="self" href="http://example.com/posts/9"/>
     <link rel="first" href="http://example.com/posts/1"/>
     <link rel="next" href="http://example.com/posts/10"/>
     <link rel="example:author" href="http://example.com/users/1"/>
     <link rel="example:comments" href="http://example.com/posts/9/comments"/>
+    <link rel="self" href="http://example.com/posts/9"/>
   </links>
   <meta>
     <author>
@@ -268,7 +274,6 @@ XML;
             ]
         );
         $transformer->addMeta('is_devel', true);
-        $transformer->setSelfUrl('http://example.com/posts/9');
         $transformer->setFirstUrl('http://example.com/posts/1');
         $transformer->setNextUrl('http://example.com/posts/10');
 

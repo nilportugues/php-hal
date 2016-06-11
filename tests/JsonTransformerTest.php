@@ -54,14 +54,24 @@ class JsonTransformerTest extends \PHPUnit_Framework_TestCase
             "title": "post title 1",
             "body": "post body 1",
             "author_id": 4,
-            "comments": []
+            "comments": [],
+            "_links":{
+                "self":{
+                    "href":"/post/1"
+                }
+            }
         },
         {
             "post_id": 2,
             "title": "post title 2",
             "body": "post body 2",
             "author_id": 5,
-            "comments": []
+            "comments": [],
+            "_links":{
+                "self":{
+                    "href":"/post/2"
+                }
+            }
         }
     ]
 }
@@ -278,7 +288,6 @@ JSON;
             ]
         );
         $transformer->addMeta('is_devel', true);
-        $transformer->setSelfUrl('http://example.com/posts/9');
         $transformer->setFirstUrl('http://example.com/posts/1');
         $transformer->setNextUrl('http://example.com/posts/10');
 
@@ -339,7 +348,12 @@ JSON;
             "user_id": "User 25",
             "created_at": "2015-07-23T12:48:00+02:00"
         }
-    ]
+    ],
+    "_links": {
+        "self": {
+            "href": "/post/1"
+        } 
+    }
 }
 JSON;
 
@@ -401,7 +415,12 @@ JSON;
             "user_id": "User 25",
             "created_at": "2015-07-23T12:48:00+02:00"
         }
-    ]
+    ],
+    "_links": {
+        "self": {
+            "href": "/post/1"
+        } 
+    }
 }
 JSON;
 
@@ -461,7 +480,12 @@ JSON;
             "user_id": "User 25",
             "created_at": "2015-07-23T12:48:00+02:00"
         }
-    ]
+    ],
+    "_links": {
+        "self": {
+            "href": "/post/1"
+        } 
+    }
 }
 JSON;
 
@@ -520,7 +544,12 @@ JSON;
             "user_id": "User 25",
             "created_at": "2015-07-23T12:48:00+02:00"
         }
-    ]
+    ],
+    "_links": {
+        "self": {
+            "href": "/post/1"
+        } 
+    }
 }
 JSON;
 
@@ -579,7 +608,12 @@ JSON;
             "user_id": "User 25",
             "created_at": "2015-07-23T12:48:00+02:00"
         }
-    ]
+    ],
+    "_links":{
+        "self":{
+            "href":"/post/1"
+        }
+    }
 }
 JSON;
 
@@ -605,7 +639,7 @@ JSON;
         return $post;
     }
 
-    public function testItCanBuildUrlsFromClassNameOrClassAlias()
+    public function testItCanBuildSelfUrls()
     {
         $mappings = [
             [
@@ -623,15 +657,10 @@ JSON;
                     'postId',
                 ],
                 'urls' => [
-                    // Mandatory
-                    'self' => 'http://example.com/posts/{Message}',
-                    // Optional
-                    'comments' => 'http://example.com/posts/{Message}/comments',
+                    'self' => 'http://example.com/posts/{postId}',
                 ],
                 // (Optional) Used by HAL+JSON
                 'curies' => [
-                    'name' => 'example',
-                    'href' => 'http://example.com/docs/rels/{rel}',
                 ],
             ],
             [
@@ -643,14 +672,10 @@ JSON;
                     'userId',
                 ],
                 'urls' => [
-                    'self' => 'http://example.com/users/{User}',
-                    'friends' => 'http://example.com/users/{User}/friends',
-                    'comments' => 'http://example.com/users/{User}/comments',
+                    'self' => 'http://example.com/users/{userId}',
                 ],
                 // (Optional) Used by HAL+JSON
                 'curies' => [
-                    'name' => 'example',
-                    'href' => 'http://example.com/docs/rels/{rel}',
                 ],
             ],
             [
@@ -662,12 +687,10 @@ JSON;
                     'commentId',
                 ],
                 'urls' => [
-                    'self' => 'http://example.com/comments/{Comment}',
+                    'self' => 'http://example.com/comments/{commentId}',
                 ],
                 // (Optional) Used by HAL+JSON
                 'curies' => [
-                    'name' => 'example',
-                    'href' => 'http://example.com/docs/rels/{rel}',
                 ],
             ],
         ];
@@ -686,12 +709,6 @@ JSON;
          "_links":{
             "self":{
                "href":"http://example.com/users/1"
-            },
-            "example:friends":{
-               "href":"http://example.com/users/1/friends"
-            },
-            "example:comments":{
-               "href":"http://example.com/users/1/comments"
             }
          }
       },
@@ -710,19 +727,13 @@ JSON;
                   "_links":{
                      "self":{
                         "href":"http://example.com/users/2"
-                     },
-                     "example:friends":{
-                        "href":"http://example.com/users/2/friends"
-                     },
-                     "example:comments":{
-                        "href":"http://example.com/users/2/comments"
                      }
                   }
                }
             },
             "_links":{
-               "example:user":{
-                  "href":"http://example.com/users/2"
+               "user":{
+                   "href":"http://example.com/users/2"
                },
                "self":{
                   "href":"http://example.com/comments/1000"
@@ -732,35 +743,12 @@ JSON;
       ]
    },
    "_links":{
-      "curies":[
-         {
-            "name":"example",
-            "href":"http://example.com/docs/rels/{rel}",
-            "templated":true
-         }
-      ],
+      "author":{
+           "href":"http://example.com/users/1"
+      },
       "self":{
          "href":"http://example.com/posts/9"
-      },
-      "first":{
-         "href":"http://example.com/posts/1"
-      },
-      "next":{
-         "href":"http://example.com/posts/10"
-      },
-      "example:author":{
-         "href":"http://example.com/users/1"
-      },
-      "example:comments":{
-         "href":"http://example.com/posts/9/comments"
       }
-   },
-   "_meta":{
-      "author":{
-         "name":"Nil Portugués Calderó",
-         "email":"contact@nilportugues.com"
-      },
-      "is_devel":true
    }
 }
 JSON;
@@ -786,18 +774,6 @@ JSON;
         );
 
         $transformer = new JsonTransformer($mapper);
-        $transformer->setMeta(
-            [
-                'author' => [
-                    'name' => 'Nil Portugués Calderó',
-                    'email' => 'contact@nilportugues.com',
-                ],
-            ]
-        );
-        $transformer->addMeta('is_devel', true);
-        $transformer->setSelfUrl('http://example.com/posts/9');
-        $transformer->setFirstUrl('http://example.com/posts/1');
-        $transformer->setNextUrl('http://example.com/posts/10');
 
         $this->assertEquals(
             \json_decode($expected, true),

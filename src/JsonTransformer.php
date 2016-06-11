@@ -385,13 +385,36 @@ class JsonTransformer extends Transformer implements HalTransformer
      */
     protected function setResponseLinks(array &$data)
     {
-        if (!empty($data[Serializer::CLASS_IDENTIFIER_KEY])) {
+        if (!empty($type = $data[Serializer::CLASS_IDENTIFIER_KEY])) {
             $data[self::LINKS_KEY] = \array_merge(
                 CuriesHelper::buildCuries($this->curies),
                 $this->addHrefToLinks($this->buildLinks()),
                 (!empty($data[self::LINKS_KEY])) ? $data[self::LINKS_KEY] : [],
                 $this->addHrefToLinks($this->getResponseAdditionalLinks($data, $data[Serializer::CLASS_IDENTIFIER_KEY]))
             );
+
+            /*
+             * Adds the _links:self:href link to the response.
+             */
+            if (!empty($type = $data[Serializer::CLASS_IDENTIFIER_KEY])) {
+                list($idValues, $idProperties) = RecursiveFormatterHelper::getIdPropertyAndValues(
+                    $this->mappings,
+                    $data,
+                    $type
+                );
+
+                $href = self::buildUrl(
+                    $this->mappings,
+                    $idProperties,
+                    $idValues,
+                    $this->mappings[$type]->getResourceUrl(),
+                    $type
+                );
+
+                if ($href != $this->mappings[$type]->getResourceUrl()) {
+                    $data[self::LINKS_KEY][self::SELF_LINK][self::LINKS_HREF] = $href;
+                }
+            }
 
             $data[self::LINKS_KEY] = \array_filter($data[self::LINKS_KEY]);
 
@@ -440,6 +463,7 @@ class JsonTransformer extends Transformer implements HalTransformer
     protected static function buildUrl(array &$mappings, $idProperties, $idValues, $url, $type)
     {
         $outputUrl = \str_replace($idProperties, $idValues, $url);
+
         if ($outputUrl !== $url) {
             return $outputUrl;
         }

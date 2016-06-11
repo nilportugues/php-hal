@@ -122,7 +122,6 @@ $transformer = new JsonTransformer($mapper);
 
 //Output transformation
 $serializer = new HalSerializer($transformer);
-$serializer->setSelfUrl('http://example.com/posts/9');
 $serializer->setNextUrl('http://example.com/posts/10');
 $serializer->addMeta('author',[['name' => 'Nil Portugués Calderó', 'email' => 'contact@nilportugues.com']]);
 
