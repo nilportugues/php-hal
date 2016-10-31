@@ -84,6 +84,68 @@ JSON;
     }
 
     /**
+     * @covers \NilPortugues\Api\Hal\JsonTransformer
+     */
+    public function testItWillAddLinkToCollectionWhenSerializingToHalJsonAnArrayOfObjects()
+    {
+        $postArray = [
+            new SimplePost(1, 'post title 1', 'post body 1', 4),
+            new SimplePost(2, 'post title 2', 'post body 2', 5),
+        ];
+
+        $postMapping = new Mapping(SimplePost::class, '/post/{postId}', ['postId']);
+        $postMapping->setFilterKeys(['body', 'title']);
+
+        $mapper = new Mapper();
+        $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
+
+        $transformer = new JsonTransformer($mapper);
+        $transformer->setNextUrl('/post?page=2');
+
+        $expected = <<<JSON
+{
+    "total": 2,
+    "_embedded": [
+        {
+            "post_id": 1,
+            "title": "post title 1",
+            "body": "post body 1",
+            "author_id": 4,
+            "comments": [],
+            "_links":{
+                "self":{
+                    "href":"/post/1"
+                }
+            }
+        },
+        {
+            "post_id": 2,
+            "title": "post title 2",
+            "body": "post body 2",
+            "author_id": 5,
+            "comments": [],
+            "_links":{
+                "self":{
+                    "href":"/post/2"
+                }
+            }
+        }
+    ],
+    "_links": {
+        "next": {
+            "href": "/post?page=2"
+        }
+    }
+}
+JSON;
+
+        $this->assertEquals(
+            \json_decode($expected, true),
+            \json_decode((new HalSerializer($transformer))->serialize($postArray), true)
+        );
+    }
+
+    /**
      *
      */
     public function testItWillThrowExceptionIfNoMappingsAreProvided()
