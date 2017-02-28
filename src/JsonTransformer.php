@@ -55,12 +55,24 @@ class JsonTransformer extends Transformer implements HalTransformer
 
         if (\is_array($value) && !empty($value[Serializer::MAP_TYPE])) {
             $data = ['total' => 0];
-            unset($value[Serializer::MAP_TYPE]);
+            $data[self::EMBEDDED_KEY] = [];
 
-            foreach ($value[Serializer::SCALAR_VALUE] as $v) {
-                $data[self::EMBEDDED_KEY][] = $this->serializeObject($v);
+            unset($value[Serializer::MAP_TYPE]);
+            if (count($value[Serializer::SCALAR_VALUE]) > 0) {
+
+                $links = [
+                    'self' => ['href' => $this->selfUrl],
+                    'next' => ['href' => $this->nextUrl]
+                ];
+                $this->nextUrl = null;
+                $this->selfUrl = null;
+
+                foreach ($value[Serializer::SCALAR_VALUE] as $v) {
+                    $data[self::EMBEDDED_KEY][] = $this->serializeObject($v);
+                }
+                $data['total']  = count($data[self::EMBEDDED_KEY]);
+                $data['_links'] =$links;
             }
-            $data['total'] = count($data[self::EMBEDDED_KEY]);
         } else {
             $data = $this->serializeObject($value);
         }
