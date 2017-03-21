@@ -1,15 +1,24 @@
 # HAL+JSON & HAL+XML API Transformer
 
-[![Build Status](https://travis-ci.org/nilportugues/php-hal.svg)] (https://travis-ci.org/nilportugues/php-hal) 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nilportugues/hal-transformer/badges/quality-score.png?b=master)]
-(https://scrutinizer-ci.com/g/nilportugues/hal-transformer/?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/e2a5a3b2-7097-4783-9912-0cbaadd0ed0e/mini.png)](https://insight.sensiolabs.com/projects/e2a5a3b2-7097-4783-9912-0cbaadd0ed0e) 
-[![Latest Stable Version](https://poser.pugx.org/nilportugues/hal/v/stable)] (https://packagist.org/packages/nilportugues/hal) 
-[![Total Downloads](https://poser.pugx.org/nilportugues/hal/downloads)] (https://packagist.org/packages/nilportugues/hal) 
-[![License](https://poser.pugx.org/nilportugues/hal/license)] (https://packagist.org/packages/nilportugues/hal) 
+[![Build Status](https://travis-ci.org/nilportugues/php-hal.svg)](https://travis-ci.org/nilportugues/php-hal) 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nilportugues/hal-transformer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nilportugues/hal-transformer/?branch=master)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/e2a5a3b2-7097-4783-9912-0cbaadd0ed0e/mini.png)](https://insight.sensiolabs.com/projects/e2a5a3b2-7097-4783-9912-0cbaadd0ed0e)
+[![Latest Stable Version](https://poser.pugx.org/nilportugues/hal/v/stable)](https://packagist.org/packages/nilportugues/hal) 
+[![Total Downloads](https://poser.pugx.org/nilportugues/hal/downloads)](https://packagist.org/packages/nilportugues/hal) 
+[![License](https://poser.pugx.org/nilportugues/hal/license)](https://packagist.org/packages/nilportugues/hal) 
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://paypal.me/nilportugues)
 
-## Installation
+1. Installation
+2. Mapping
+    - 2.1 Mapping with arrays
+    - 2.2 Mapping with Mapping class
+3. HAL Serialization
+    - 3.1 HAL+JSON
+    - 3.2 HAL+XML
+4. HAL Paginated Resource
+5. PSR-7 Response objects
+ 
+## 1. Installation
 
 Use [Composer](https://getcomposer.org) to install the package:
 
@@ -17,7 +26,8 @@ Use [Composer](https://getcomposer.org) to install the package:
 $ composer require nilportugues/hal
 ```
 
-## Usage
+## 2. Mapping
+
 Given a PHP Object, and a series of mappings, the HAL+JSON and HAL+XML API transformer will represent the given data following the `https://tools.ietf.org/html/draft-kelly-json-hal-07` specification draft.
 
 For instance, given the following piece of code, defining a Blog Post and some comments:
@@ -45,7 +55,12 @@ $post = new Post(
 );
 ```
 
-And a Mapping array for all the involved classes:
+We will have to map all the involved classes. This can be done as one single array, or a series of Mapping classes.
+
+### 2.1 Mapping with arrays
+
+Mapping involved classes using arrays is done as follows:
+
 
 ```php
 use NilPortugues\Api\Mapping\Mapper;
@@ -84,6 +99,9 @@ $mappings = [
         'id_properties' => [
             'userId',
         ],
+        'urls' => [
+            'self' => 'http://example.com/users/{userId}',
+        ],
         'curies' => [
             'name' => 'example',
             'href' => "http://example.com/docs/rels/{rel}",
@@ -110,7 +128,170 @@ $mappings = [
 $mapper = new Mapper($mappings);
 ```
 
-Calling the transformer will output a **valid HAL+JSON/HAL+XML response** using the correct formatting:
+### 2.2 Mapping with Mapping class
+
+In order to map with Mapping class, you need to create a new class for each involved class.
+
+This mapping fashion scales way better than using an array.
+
+All Mapping classes will extend the `\NilPortugues\Api\Mappings\HalMapping` interface. 
+
+```php
+
+// PostMapping.php
+
+class PostMapping implements \NilPortugues\Api\Mappings\HalMapping 
+{
+    public function getClass()
+    {
+        return Post::class;
+    }
+
+    public function getAlias()
+    {
+        return 'Message';
+    }
+
+    public function getAliasedProperties()
+    {
+        return [
+           'author' => 'author',
+           'title' => 'headline',
+           'content' => 'body',
+       ];
+    }
+
+    public function getHideProperties()
+    {
+        return [];
+    }
+
+    public function getIdProperties()
+    {
+        return ['postId'];
+    }
+   
+    public function getUrls()
+    {
+        return [            
+            'self' => 'http://example.com/posts/{postId}', // Mandatory            
+            'comments' => 'http://example.com/posts/{postId}/comments' // Optional
+        ];
+    }
+
+    public function getCuries()
+    {
+        return [
+           'name' => 'example',
+           'href' => "http://example.com/docs/rels/{rel}",
+        ];
+    }
+}
+
+
+// UserMapping.php
+
+class UserMapping implements \NilPortugues\Api\Mappings\HalMapping 
+{
+    public function getClass()
+    {
+        return User::class;
+    }
+
+    public function getAlias()
+    {
+        return '';
+    }
+
+    public function getAliasedProperties()
+    {
+        return [];
+    }
+
+    public function getHideProperties()
+    {
+        return [];
+    }
+
+    public function getIdProperties()
+    {
+        return ['postId'];
+    }
+   
+    public function getUrls()
+    {
+        return [            
+            'self' => 'http://example.com/users/{userId}'
+        ];
+    }
+
+    public function getCuries()
+    {
+        return [
+           'name' => 'example',
+           'href' => "http://example.com/docs/rels/{rel}",
+        ];
+    }
+}
+
+
+// CommentMapping.php
+
+class CommentMapping implements \NilPortugues\Api\Mappings\HalMapping 
+{
+    public function getClass()
+    {
+        return Comment::class;
+    }
+
+    public function getAlias()
+    {
+        return '';
+    }
+
+    public function getAliasedProperties()
+    {
+        return [];
+    }
+
+    public function getHideProperties()
+    {
+        return [];
+    }
+
+    public function getIdProperties()
+    {
+        return ['commentId'];
+    }
+   
+    public function getUrls()
+    {
+        return [            
+            'self' => 'http://example.com/comments/{commentId}',
+        ];
+    }
+
+    public function getCuries()
+    {
+        return [
+           'name' => 'example',
+           'href' => "http://example.com/docs/rels/{rel}",
+        ];
+    }
+} 
+
+$mappings = [
+    PostMapping::class,
+    UserMapping::class,
+    CommentMapping::class,
+];
+$mapper = new Mapper($mappings);
+
+```
+
+## 3. HAL Serialization
+
+Calling the transformer will output a **valid HAL response** using the correct formatting:
 
 ```php
 use NilPortugues\Api\Hal\JsonTransformer; 
@@ -145,14 +326,14 @@ foreach($response->getHeaders() as $header => $values) {
 echo $response->getBody();
 ```
 
-**Output:**
+### 3.1 HAL+JSON
 
 ```
 HTTP/1.1 200 OK
 Cache-Control: private, max-age=0, must-revalidate
 Content-type: application/hal+json
 ```
-
+Output: 
 ```json
 {
     "post_id": 9,
@@ -242,8 +423,16 @@ Content-type: application/hal+json
 }
 ```
 
-**For XML using `$transformer = new XmlTransformer($mapper);`**
 
+### 3.2 HAL+XML
+
+For XML output use the sample code but using the XML transformer instead: 
+
+```
+$transformer = new XmlTransformer($mapper);
+```
+
+Output:
 
 ```
 HTTP/1.1 200 OK
@@ -315,7 +504,11 @@ Content-type: application/hal+xml
 </resource>
 ```
 
-#### Response objects
+## 4. HAL Paginated Resource
+
+
+
+## 5. Response objects
 
 The following PSR-7 Response objects providing the right headers and HTTP status codes are available:
 
