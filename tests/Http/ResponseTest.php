@@ -26,7 +26,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testXmlResponse()
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <resource>
   <total><![CDATA[2]]></total>

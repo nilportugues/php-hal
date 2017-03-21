@@ -26,9 +26,9 @@ final class CuriesHelper
         $curies = (array) \array_filter($curies);
 
         if (!empty($curies)) {
-            $curiesArray = [JsonTransformer::LINKS_CURIES => \array_values($curies)];
+            $curiesArray = [JsonTransformer::CURIES => \array_values($curies)];
 
-            foreach ($curiesArray[JsonTransformer::LINKS_CURIES] as &$value) {
+            foreach ($curiesArray[JsonTransformer::CURIES] as &$value) {
                 $value[JsonTransformer::LINKS_TEMPLATED_KEY] = true;
             }
         }
