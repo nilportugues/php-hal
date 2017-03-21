@@ -12,6 +12,7 @@
 namespace NilPortugues\Tests\Api\Hal;
 
 use DateTime;
+use NilPortugues\Api\Hal\HalPagination;
 use NilPortugues\Api\Hal\JsonTransformer;
 use NilPortugues\Api\Mapping\Mapper;
 use NilPortugues\Api\Mapping\Mapping;
@@ -27,9 +28,81 @@ use NilPortugues\Tests\Api\Hal\Dummy\SimpleObject\Post as SimplePost;
 
 class JsonTransformerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     *
-     */
+    public function testItCanSerializeHalPagination()
+    {
+        $objects = [
+            new SimplePost(1, 'post title 1', 'post body 1', 4),
+            new SimplePost(2, 'post title 2', 'post body 2', 5),
+        ];
+
+        $postMapping = new Mapping(SimplePost::class, '/post/{postId}', ['postId']);
+        $postMapping->setFilterKeys(['body', 'title']);
+
+        $mapper = new Mapper();
+        $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
+
+        $page = new HalPagination();
+        $page->setEmbedded($objects);
+        $page->setTotal(2);
+        $page->setCount(2);
+        $page->setSelf('/post?page=1');
+        $page->setPrev('/post?page=1');
+        $page->setFirst('/post?page=1');
+        $page->setLast('/post?page=1');
+
+        $serializer = new HalSerializer(new JsonTransformer($mapper));
+
+        $expected = <<<'JSON'
+{
+   "count":2,
+   "total":2,
+   "_embedded":[
+      {
+         "post_id":1,
+         "title":"post title 1",
+         "body":"post body 1",
+         "author_id":4,
+         "_links":{
+            "self":{
+               "href":"/post/1"
+            }
+         }
+      },
+      {
+         "post_id":2,
+         "title":"post title 2",
+         "body":"post body 2",
+         "author_id":5,
+         "_links":{
+            "self":{
+               "href":"/post/2"
+            }
+         }
+      }
+   ],
+   "_links":{
+      "self":{
+         "href":"/post?page=1"
+      },
+      "prev":{
+         "href":"/post?page=1"
+      },
+      "first":{
+         "href":"/post?page=1"
+      },
+      "last":{
+         "href":"/post?page=1"
+      }
+   }
+}
+JSON;
+
+        $this->assertEquals(
+            \json_decode($expected, true),
+            \json_decode($serializer->serialize($page), true)
+        );
+    }
+
     public function testItWillSerializeToHalJsonAnArrayOfObjects()
     {
         $postArray = [
@@ -45,7 +118,7 @@ class JsonTransformerTest extends \PHPUnit_Framework_TestCase
 
         $transformer = new JsonTransformer($mapper);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
     "total": 2,
     "_embedded": [
@@ -83,9 +156,6 @@ JSON;
         );
     }
 
-    /**
-     *
-     */
     public function testItWillThrowExceptionIfNoMappingsAreProvided()
     {
         $mapper = new Mapper();
@@ -95,9 +165,6 @@ JSON;
         (new HalSerializer(new JsonTransformer($mapper)))->serialize(new \stdClass());
     }
 
-    /**
-     *
-     */
     public function testItWillSerializeToHalJsonAComplexObject()
     {
         $mappings = [
@@ -167,7 +234,7 @@ JSON;
 
         $mapper = new Mapper($mappings);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
    "post_id":9,
    "headline":"Hello World",
@@ -297,9 +364,6 @@ JSON;
         );
     }
 
-    /**
-     *
-     */
     public function testItWillSerializeToHalJsonASimpleObject()
     {
         $post = $this->createSimplePost();
@@ -311,7 +375,7 @@ JSON;
 
         $transformer = new JsonTransformer($mapper);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
     "post_id": 1,
     "title": "post title",
@@ -363,9 +427,6 @@ JSON;
         );
     }
 
-    /**
-     *
-     */
     public function testItWillRenamePropertiesFromClass()
     {
         $post = $this->createSimplePost();
@@ -378,7 +439,7 @@ JSON;
 
         $transformer = new JsonTransformer($mapper);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
     "some_id": 1,
     "headline": "post title",
@@ -430,9 +491,6 @@ JSON;
         );
     }
 
-    /**
-     *
-     */
     public function testItWillHidePropertiesFromClass()
     {
         $post = $this->createSimplePost();
@@ -445,7 +503,7 @@ JSON;
 
         $transformer = new JsonTransformer($mapper);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
     "post_id": 1,
     "author_id": 2,
@@ -507,7 +565,7 @@ JSON;
 
         $transformer = new JsonTransformer($mapper);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
     "post_id": 1,
     "title": "post title",
@@ -571,7 +629,7 @@ JSON;
 
         $transformer = new JsonTransformer($mapper);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
     "post_id": 1,
     "title": "post title",
@@ -697,7 +755,7 @@ JSON;
 
         $mapper = new Mapper($mappings);
 
-        $expected = <<<JSON
+        $expected = <<<'JSON'
 {
    "post_id":9,
    "headline":"Hello World",

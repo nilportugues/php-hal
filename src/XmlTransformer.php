@@ -11,6 +11,8 @@
 namespace NilPortugues\Api\Hal;
 
 use DOMDocument;
+use NilPortugues\Api\Mapping\Mapper;
+use NilPortugues\Api\Mapping\MappingFactory;
 use SimpleXMLElement;
 
 /**
@@ -31,6 +33,30 @@ class XmlTransformer extends JsonTransformer implements HalTransformer
     ];
 
     /**
+     * XmlTransformer constructor.
+     *
+     * @param Mapper $mapper
+     */
+    public function __construct(Mapper $mapper)
+    {
+        $this->addHalPaginationMapping($mapper);
+        parent::__construct($mapper);
+    }
+
+    /**
+     * @param Mapper $mapper
+     */
+    protected function addHalPaginationMapping(Mapper $mapper)
+    {
+        $mappings = $mapper->getClassMap();
+
+        $halPaginationMapping = MappingFactory::fromClass(HalPaginationMapping::class);
+        $mappings[ltrim($halPaginationMapping->getClassName(), '\\')] = $halPaginationMapping;
+
+        $mapper->setClassMap($mappings);
+    }
+
+    /**
      * @param mixed $data
      *
      * @return string
@@ -39,10 +65,10 @@ class XmlTransformer extends JsonTransformer implements HalTransformer
     {
         $xmlData = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><resource></resource>');
         $this->arrayToXml($data, $xmlData);
-        if (!empty($data[JsonTransformer::LINKS_KEY][JsonTransformer::SELF_LINK][JsonTransformer::LINKS_HREF])) {
+        if (!empty($data[JsonTransformer::LINKS_KEY][JsonTransformer::LINK_SELF][JsonTransformer::LINKS_HREF])) {
             $xmlData->addAttribute(
                 JsonTransformer::LINKS_HREF,
-                $data[JsonTransformer::LINKS_KEY][JsonTransformer::SELF_LINK][JsonTransformer::LINKS_HREF]
+                $data[JsonTransformer::LINKS_KEY][JsonTransformer::LINK_SELF][JsonTransformer::LINKS_HREF]
             );
         }
 
@@ -82,11 +108,11 @@ class XmlTransformer extends JsonTransformer implements HalTransformer
                         }
                     }
                 } else {
-                    if (!empty($value[JsonTransformer::LINKS_KEY][JsonTransformer::SELF_LINK][JsonTransformer::LINKS_HREF])) {
+                    if (!empty($value[JsonTransformer::LINKS_KEY][JsonTransformer::LINK_SELF][JsonTransformer::LINKS_HREF])) {
                         $subnode = $xmlData->addChild('resource');
                         $subnode->addAttribute(
                             JsonTransformer::LINKS_HREF,
-                            $value[JsonTransformer::LINKS_KEY][JsonTransformer::SELF_LINK][JsonTransformer::LINKS_HREF]
+                            $value[JsonTransformer::LINKS_KEY][JsonTransformer::LINK_SELF][JsonTransformer::LINKS_HREF]
                         );
 
                         if ($key !== 'resource') {
@@ -101,7 +127,7 @@ class XmlTransformer extends JsonTransformer implements HalTransformer
             } else {
                 if ($key !== JsonTransformer::LINKS_HREF) {
                     if ($value === true || $value === false) {
-                        $value = ($value)  ? 'true' : 'false';
+                        $value = ($value) ? 'true' : 'false';
                     }
 
                     $xmlData->addChild("$key", '<![CDATA['.html_entity_decode($value).']]>');

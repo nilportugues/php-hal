@@ -12,6 +12,7 @@
 namespace NilPortugues\Tests\Api\Hal;
 
 use DateTime;
+use NilPortugues\Api\Hal\HalPagination;
 use NilPortugues\Api\Hal\XmlTransformer;
 use NilPortugues\Api\Mapping\Mapper;
 use NilPortugues\Api\Mapping\Mapping;
@@ -27,9 +28,67 @@ use NilPortugues\Tests\Api\Hal\Dummy\SimpleObject\Post as SimplePost;
 
 class XmlTransformerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     *
-     */
+    public function testItCanSerializeHalPagination()
+    {
+        $objects = [
+            new SimplePost(1, 'post title 1', 'post body 1', 4),
+            new SimplePost(2, 'post title 2', 'post body 2', 5),
+        ];
+
+        $postMapping = new Mapping(SimplePost::class, '/post/{postId}', ['postId']);
+        $postMapping->setFilterKeys(['body', 'title']);
+
+        $mapper = new Mapper();
+        $mapper->setClassMap([$postMapping->getClassName() => $postMapping]);
+
+        $page = new HalPagination();
+        $page->setEmbedded($objects);
+        $page->setTotal(2);
+        $page->setCount(2);
+        $page->setSelf('/post?page=1');
+        $page->setPrev('/post?page=1');
+        $page->setFirst('/post?page=1');
+        $page->setLast('/post?page=1');
+
+        $serializer = new HalSerializer(new XmlTransformer($mapper));
+
+        $expected = <<<'JSON'
+<?xml version="1.0" encoding="UTF-8"?>
+<resource href="/post?page=1">
+  <count><![CDATA[2]]></count>
+  <total><![CDATA[2]]></total>
+  <embedded>
+    <resource href="/post/1">
+      <post_id><![CDATA[1]]></post_id>
+      <title><![CDATA[post title 1]]></title>
+      <body><![CDATA[post body 1]]></body>
+      <author_id><![CDATA[4]]></author_id>
+      <links>
+        <link rel="self" href="/post/1"/>
+      </links>
+    </resource>
+    <resource href="/post/2">
+      <post_id><![CDATA[2]]></post_id>
+      <title><![CDATA[post title 2]]></title>
+      <body><![CDATA[post body 2]]></body>
+      <author_id><![CDATA[5]]></author_id>
+      <links>
+        <link rel="self" href="/post/2"/>
+      </links>
+    </resource>
+  </embedded>
+  <links>
+    <link rel="self" href="/post?page=1"/>
+    <link rel="prev" href="/post?page=1"/>
+    <link rel="first" href="/post?page=1"/>
+    <link rel="last" href="/post?page=1"/>
+  </links>
+</resource>
+JSON;
+
+        $this->assertEquals($expected, $serializer->serialize($page));
+    }
+
     public function testItWillSerializeToHalXmlAnArrayOfObjects()
     {
         $postArray = [
@@ -45,7 +104,7 @@ class XmlTransformerTest extends \PHPUnit_Framework_TestCase
 
         $transformer = new XmlTransformer($mapper);
 
-        $expected = <<<XML
+        $expected = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <resource>
   <total><![CDATA[2]]></total>
@@ -77,9 +136,6 @@ XML;
         $this->assertEquals($expected, (new HalSerializer($transformer))->serialize($postArray));
     }
 
-    /**
-     *
-     */
     public function testItWillThrowExceptionIfNoMappingsAreProvided()
     {
         $mapper = new Mapper();
@@ -89,9 +145,6 @@ XML;
         (new HalSerializer(new XmlTransformer($mapper)))->serialize(new \stdClass());
     }
 
-    /**
-     *
-     */
     public function testItWillSerializeToHalXmlAComplexObject()
     {
         $mappings = [
@@ -179,7 +232,7 @@ XML;
 
         $mapper = new Mapper($mappings);
 
-        $expected = <<<XML
+        $expected = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <resource href="http://example.com/posts/9">
   <post_id><![CDATA[9]]></post_id>

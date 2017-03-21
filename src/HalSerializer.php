@@ -15,7 +15,7 @@ use NilPortugues\Serializer\DeepCopySerializer;
 /**
  * Class HalJsonSerializer.
  */
-class HalSerializer  extends DeepCopySerializer
+class HalSerializer extends DeepCopySerializer
 {
     /**
      * @var HalTransformer
