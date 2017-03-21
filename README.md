@@ -8,15 +8,15 @@
 [![License](https://poser.pugx.org/nilportugues/hal/license)](https://packagist.org/packages/nilportugues/hal) 
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://paypal.me/nilportugues)
 
-1. Installation
-2. Mapping
-    - 2.1 Mapping with arrays
-    - 2.2 Mapping with Mapping class
-3. HAL Serialization
-    - 3.1 HAL+JSON
-    - 3.2 HAL+XML
-4. HAL Paginated Resource
-5. PSR-7 Response objects
+1. [Installation](#1-installation)
+2. [Mapping](#2-mapping)
+    - 2.1 [Mapping with arrays](#21-mapping-with-arrays)
+    - 2.2 [Mapping with Mapping class](#22-mapping-with-mapping-class)
+3. [HAL Serialization](#3-hal-serialization)
+    - 3.1 [HAL+JSON](#31-haljson)
+    - 3.2 [HAL+XML](#32-halxml)
+4. [HAL Paginated Resource](#4-hal-paginated-resource)
+5. [PSR-7 Response objects](#5-response-objects)
  
 ## 1. Installation
 
@@ -303,9 +303,6 @@ $transformer = new JsonTransformer($mapper);
 
 //Output transformation
 $serializer = new HalSerializer($transformer);
-$serializer->setNextUrl('http://example.com/posts/10');
-$serializer->addMeta('author',[['name' => 'Nil Portugués Calderó', 'email' => 'contact@nilportugues.com']]);
-
 $output = $serializer->serialize($post);
 
 //PSR7 Response with headers and content.
@@ -319,6 +316,7 @@ header(
         $response->getReasonPhrase()
     )
 );
+
 foreach($response->getHeaders() as $header => $values) {
     header(sprintf("%s:%s\n", $header, implode(', ', $values)));
 }
@@ -402,23 +400,12 @@ Output:
         "self": {
             "href": "http://example.com/posts/9"
         },
-        "next": {
-            "href": "http://example.com/posts/10"
-        },
         "example:author": {
             "href": "http://example.com/users/1"
         },
         "example:comments": {
             "href": "http://example.com/posts/9/comments"
         }
-    },
-    "_meta": {
-        "author": [
-            {
-                "name": "Nil Portugués Calderó",
-                "email": "contact@nilportugues.com"
-            }
-        ]
     }
 }
 ```
@@ -490,27 +477,66 @@ Content-type: application/hal+xml
       </link>
     </curies>
     <link rel="self" href="http://example.com/posts/9"/>
-    <link rel="first" href="http://example.com/posts/1"/>
-    <link rel="next" href="http://example.com/posts/10"/>
     <link rel="example:author" href="http://example.com/users/1"/>
     <link rel="example:comments" href="http://example.com/posts/9/comments"/>
   </links>
-  <meta>
-    <author>
-      <name><![CDATA[Nil Portugués Calderó]]></name>
-      <email><![CDATA[contact@nilportugues.com]]></email>
-    </author>    
-  </meta>
 </resource>
 ```
 
 ## 4. HAL Paginated Resource
 
+A pagination object to easy the usage of this package is provided. 
 
+For both XML and JSON output, use the `HalPagination` object to build your paginated representation of the current resource.
+ 
+Methods provided by `HalPagination` are as follows: 
+
+ - `setSelf($self)`
+ - `setFirst($first)`
+ - `setPrev($prev)`
+ - `setNext($next)`
+ - `setLast($last)`
+ - `setCount($count)`
+ - `setTotal($total)`
+ - `setEmbedded(array $embedded)`
+ 
+In order to use it, create a new HalPagination instance, use the setters and pass the instance to the `serialize($value)` method of the serializer. 
+
+Everything else will be handled by serializer itself. Easy as that!
+ 
+```php
+use NilPortugues\Api\Hal\HalPagination; 
+use NilPortugues\Api\Hal\HalSerializer; 
+use NilPortugues\Api\Hal\JsonTransformer; 
+
+// ...
+//$objects is an array of objects, such as Post::class.
+// ...
+ 
+$page = new HalPagination();
+
+//set the amounts
+$page->setTotal(20);
+$page->setCount(10);
+
+//set the objects
+$page->setEmbedded($objects);
+
+//set up the pagination links
+$page->setSelf('/post?page=1');
+$page->setPrev('/post?page=1');
+$page->setFirst('/post?page=1');
+$page->setLast('/post?page=1');
+
+$output = $serializer->serialize($page);
+
+``` 
 
 ## 5. Response objects
 
-The following PSR-7 Response objects providing the right headers and HTTP status codes are available:
+The following PSR-7 Response objects providing the right headers and HTTP status codes are available.
+
+Its use is optional and are provided as a starting point.
 
 - `NilPortugues\Api\Hal\Http\Message\ErrorResponse($body)`
 - `NilPortugues\Api\Hal\Http\Message\ResourceCreatedResponse($body)`
