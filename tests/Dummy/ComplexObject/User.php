@@ -25,13 +25,19 @@ class User
     private $name;
 
     /**
+     * @var
+     */
+    private $password;
+
+    /**
      * @param UserId $id
      * @param $name
      */
-    public function __construct(UserId $id, $name)
+    public function __construct(UserId $id, $name, $password)
     {
         $this->userId = $id;
         $this->name = $name;
+        $this->password = $password;
     }
 
     /**
@@ -48,5 +54,13 @@ class User
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 }

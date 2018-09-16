@@ -198,7 +198,9 @@ JSON;
                 'class' => User::class,
                 'alias' => '',
                 'aliased_properties' => [],
-                'hide_properties' => [],
+                'hide_properties' => [
+                    'password',
+                ],
                 'id_properties' => [
                     'userId',
                 ],
@@ -330,13 +332,14 @@ JSON;
             'Your first post',
             new User(
                 new UserId(1),
-                'Post Author'
+                'Post Author',
+                'ilovemyjob'
             ),
             [
                 new Comment(
                     new CommentId(1000),
                     'Have no fear, sers, your king is safe.',
-                    new User(new UserId(2), 'Barristan Selmy'),
+                    new User(new UserId(2), 'Barristan Selmy', 'ilovemyjob'),
                     [
                         'created_at' => (new DateTime('2015-07-18T12:13:00+00:00'))->format('c'),
                         'accepted_at' => (new DateTime('2015-07-19T00:00:00+00:00'))->format('c'),
@@ -725,7 +728,9 @@ JSON;
                 'class' => User::class,
                 'alias' => '',
                 'aliased_properties' => [],
-                'hide_properties' => [],
+                'hide_properties' => [
+                    'password',
+                ],
                 'id_properties' => [
                     'userId',
                 ],
@@ -816,13 +821,14 @@ JSON;
             'Your first post',
             new User(
                 new UserId(1),
-                'Post Author'
+                'Post Author',
+                'ilovemyjob'
             ),
             [
                 new Comment(
                     new CommentId(1000),
                     'Have no fear, sers, your king is safe.',
-                    new User(new UserId(2), 'Barristan Selmy'),
+                    new User(new UserId(2), 'Barristan Selmy', 'ilovemyjob'),
                     [
                         'created_at' => (new DateTime('2015-07-18T12:13:00+00:00'))->format('c'),
                         'accepted_at' => (new DateTime('2015-07-19T00:00:00+00:00'))->format('c'),
